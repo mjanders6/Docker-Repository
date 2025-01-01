@@ -6,7 +6,7 @@ WORKDIR /minecraft
 
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
-    openjdk-17-jre-headless \
+    openjdk-21-jre-headless \
     wget \
     curl \
     tzdata \
@@ -20,14 +20,11 @@ RUN useradd -m -s /bin/bash minecraft
 
 
 # Set environment variables
-ENV MINECRAFT_VERSION=1.21.4 \
-    EULA=true \
+ENV EULA=true \
     SERVER_PORT=25565
 
 # Download and prepare Minecraft server
-RUN wget -O server.jar https://launcher.mojang.com/v1/objects/$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json | \
-    jq -r ".versions[] | select(.id==\"${MINECRAFT_VERSION}\") | .url" | \
-    xargs curl -s | jq -r '.downloads.server.url')
+RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/4707d00eb834b446575d89a61a11b5d548d8c001/server.jar
 
 # Set permissions for the minecraft user
 RUN chown -R minecraft:minecraft /minecraft
