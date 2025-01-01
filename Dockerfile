@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     tzdata \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Expose the necessary ports
-EXPOSE 25565
+# Expose the Minecraft server port
+EXPOSE ${SERVER_PORT}
 
 # Add a non-root user to run the Minecraft server
 RUN useradd -m -s /bin/bash minecraft
@@ -25,7 +25,9 @@ ENV MINECRAFT_VERSION=1.21.4 \
     SERVER_PORT=25565
 
 # Download and prepare Minecraft server
-RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/4707d00eb834b446575d89a61a11b5d548d8c001/server.jar
+RUN wget -O server.jar https://launcher.mojang.com/v1/objects/$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json | \
+    jq -r ".versions[] | select(.id==\"${MINECRAFT_VERSION}\") | .url" | \
+    xargs curl -s | jq -r '.downloads.server.url')
 
 # Set permissions for the minecraft user
 RUN chown -R minecraft:minecraft /minecraft
@@ -36,7 +38,10 @@ USER minecraft
 # Copy start script to container
 COPY start.sh /minecraft/start.sh
 COPY server.properties /minecraft/server.properties
-RUN chmod +x /minecraft/start.sh
+#RUN chmod +x /minecraft/start.sh
+
+# Automatically accept the EULA
+RUN echo "eula=${EULA}" > /minecraft/eula.txt
 
 # Set the default command to run the Minecraft server
 CMD ["./start.sh"]
