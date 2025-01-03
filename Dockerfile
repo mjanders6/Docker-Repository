@@ -1,8 +1,11 @@
 # Use the official Ubuntu 22.04 image as the base
 FROM ubuntu:22.04
 
+# Create sub-directories
+RUN mkdir -p /opt/minecraft/backups /opt/minecraft/tools /opt/minecraft/server
+
 # Set the working directory
-WORKDIR /minecraft
+WORKDIR /opt/minecraft/server
 
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
