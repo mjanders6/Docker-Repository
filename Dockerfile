@@ -4,6 +4,9 @@ FROM ubuntu:22.04
 # Set the working directory
 WORKDIR /minecraft
 
+# Setup directories
+RUN mkdir -p /minecraft/backups /minecraft/tools /minecraft/server
+
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
     openjdk-21-jre-headless \
@@ -17,7 +20,6 @@ EXPOSE ${SERVER_PORT}
 
 # Add a non-root user to run the Minecraft server
 RUN useradd -m -s /bin/bash minecraft
-
 
 # Set environment variables
 ENV EULA=true \
@@ -34,7 +36,6 @@ USER minecraft
 
 # Copy start script to container
 COPY start.sh /minecraft/start.sh
-COPY broadcast.sh /minecraft/broadcast.sh
 COPY server.properties /minecraft/server.properties
 
 #RUN chmod +x /minecraft/start.sh
