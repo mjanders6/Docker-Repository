@@ -29,14 +29,12 @@ RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/4707d00eb834b44
 # Set permissions for the minecraft user
 RUN chown -R minecraft:minecraft /minecraft
 
-COPY broadcast.sh /minecraft/broadcast.sh
-RUN chmod +x /minecraft/broadcast.sh
-
 # Switch to the non-root user
 USER minecraft
 
 # Copy start script to container
 COPY start.sh /minecraft/start.sh
+COPY broadcast.sh /minecraft/broadcast.sh
 COPY server.properties /minecraft/server.properties
 
 #RUN chmod +x /minecraft/start.sh
