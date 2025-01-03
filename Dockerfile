@@ -1,11 +1,8 @@
 # Use the official Ubuntu 22.04 image as the base
 FROM ubuntu:22.04
 
-# Create sub-directories
-RUN mkdir -p /opt/minecraft/backups /opt/minecraft/tools /opt/minecraft/server
-
 # Set the working directory
-WORKDIR /opt/minecraft/server
+WORKDIR /minecraft
 
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
@@ -32,12 +29,16 @@ RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/4707d00eb834b44
 # Set permissions for the minecraft user
 RUN chown -R minecraft:minecraft /minecraft
 
+COPY broadcast.sh /minecraft/broadcast.sh
+RUN chmod +x /minecraft/broadcast.sh
+
 # Switch to the non-root user
 USER minecraft
 
 # Copy start script to container
 COPY start.sh /minecraft/start.sh
 COPY server.properties /minecraft/server.properties
+
 #RUN chmod +x /minecraft/start.sh
 
 # Automatically accept the EULA

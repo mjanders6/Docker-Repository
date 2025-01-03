@@ -1,3 +1,7 @@
 #!/bin/bash
+
+# Create a named pipe:
+mkfifo /tmp/minecraft-pipe
+
 # Start Minecraft server
-java -Xmx1024M -Xms1024M -jar server.jar nogui
+cat /tmp/minecraft-pipe | java -Xmx1024M -Xms1024M -jar server.jar nogui
