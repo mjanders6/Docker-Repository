@@ -7,7 +7,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
     git \
-    systemd \
     openjdk-21-jre-headless \
     wget \
     curl \
@@ -17,10 +16,6 @@ RUN apt-get update && apt-get install -y \
 
 # Add a non-root user to run the Minecraft server
 RUN useradd -r -m -U -d /opt/minecraft -s /bin/bash minecraft
-
-# Set permissions for the minecraft user
-#RUN chown -R minecraft:minecraft /opt/minecraft
-COPY ./config/minecraft.service /etc/systemd/system/minecraft.service
 
 # Switch to the non-root user
 USER minecraft
@@ -48,8 +43,6 @@ RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/4707d00eb834b44
 # Copy start script to container
 COPY ./config/start.sh /opt/minecraft/server/start.sh
 COPY ./config/server.properties /opt/minecraft/server/server.properties
-
-#RUN chmod +x /minecraft/start.sh
 
 # Automatically accept the EULA
 RUN echo "eula=${EULA}" > /opt/minecraft/server/eula.txt
