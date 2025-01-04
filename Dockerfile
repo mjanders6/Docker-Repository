@@ -44,6 +44,12 @@ RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/4707d00eb834b44
 COPY ./config/start.sh /opt/minecraft/server/start.sh
 COPY ./config/server.properties /opt/minecraft/server/server.properties
 
+# Switch to root to mame the start.sh executable 
+USER root
+RUN chmod +x start.sh
+
+USER minecraft
+
 # Automatically accept the EULA
 RUN echo "eula=${EULA}" > /opt/minecraft/server/eula.txt
 
