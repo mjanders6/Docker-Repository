@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-# Minecraft-Docker
-
-- Need to make the start.sh executable prior to building the image
-=======
 # Purpose 
 This Repository is to manage home lab Docker files and compose files
 
@@ -11,4 +6,4 @@ This Repository is to manage home lab Docker files and compose files
 - sudo service docker restart
 
 ## Minecraft
->>>>>>> main
+
