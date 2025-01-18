@@ -1,0 +1,10 @@
+services:
+  minecraft:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./Server:/opt/minecraft/server
+    restart: always
