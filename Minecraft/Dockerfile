@@ -57,6 +57,6 @@ RUN echo "eula=${EULA}" > /opt/minecraft/server/eula.txt
 WORKDIR /opt/minecraft/server
 
 # Declare a volume for server data
-VOLUME ["/minecraft"]
+VOLUME ["/opt/minecraft/server"]
 
 CMD ["./start.sh"]
