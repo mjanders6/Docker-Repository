@@ -1,10 +1,16 @@
 services:
   minecraft:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: minecraft-server:latest
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile
+    container_name: minecraft
+    environment:
+      - PUID=1000
+      - PGID=1000
     ports:
       - "25565:25565"
+    user: "minecraft:minecraft"
     volumes:
-      - ./Server:/minecraft/server
-    restart: always
+      - ./server:/opt
+    restart: unless-stopped #always
