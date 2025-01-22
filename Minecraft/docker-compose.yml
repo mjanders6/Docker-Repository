@@ -1,9 +1,6 @@
 services:
   minecraft:
     image: minecraft-server:latest
-    #    build:
-    #      context: .
-    #      dockerfile: Dockerfile
     container_name: minecraft
     environment:
       - PUID=1000
@@ -12,5 +9,8 @@ services:
       - "25565:25565"
     user: "minecraft:minecraft"
     volumes:
-      - ./server:/opt
-    restart: unless-stopped #always
+      - server:/opt/minecraft
+    restart: unless-stopped
+volumes:
+  server:
+    external: true
