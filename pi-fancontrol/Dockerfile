@@ -1,9 +1,8 @@
-# Use a full Debian-based Python image instead of slim
-FROM python:3.9-bullseye
+FROM balenalib/raspberrypi3-debian:latest
 
 WORKDIR /app
 
-# Update package lists and install necessary tools
+# Update package lists and install GPIO tools
 RUN apt update && apt install -y \
     raspberrypi-kernel \
     raspberrypi-bootloader \
