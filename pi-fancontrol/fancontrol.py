@@ -10,8 +10,8 @@ fan = PWMOutputDevice(FAN_GPIO_PIN)
 PROMETHEUS_URL = "http://localhost:9090/api/v1/query"
 
 # Thresholds (in Celsius)
-TEMP_OFF = 50
-TEMP_FULL_SPEED = 70
+TEMP_OFF = 25
+TEMP_FULL_SPEED = 50
 
 def get_cpu_temperature():
     """Query Prometheus for the CPU temperature."""
