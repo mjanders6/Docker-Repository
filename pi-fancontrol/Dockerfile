@@ -12,10 +12,10 @@ RUN apt update && apt install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the fan control script
-COPY fancontrol.py /app/fancontrol.py
+COPY ./fancontrol.py /app/fancontrol.py
 
 # Install Python dependencies
-RUN pip install RPi.GPIO
+RUN pip install RPi.GPIO gpiozero requests
 
 # Run the script
 CMD ["python3", "/app/fancontrol.py"]
