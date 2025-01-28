@@ -1,12 +1,14 @@
-FROM balenalib/raspberrypi3-debian:latest
+# Use a full Debian-based Python image instead of slim
+FROM python:3.9-bullseye
 
 WORKDIR /app
 
-# Update package lists and install GPIO tools
+# Update package lists and install necessary tools
 RUN apt update && apt install -y \
-    raspberrypi-kernel \
-    raspberrypi-bootloader \
+    #raspberrypi-kernel \
+    #raspberrypi-bootloader \
     raspi-gpio \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the fan control script
