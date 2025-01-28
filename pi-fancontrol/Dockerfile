@@ -1,11 +1,20 @@
-FROM python:3.9-slim
+# Use a full Debian-based Python image instead of slim
+FROM python:3.9-bullseye
 
 WORKDIR /app
 
-RUN apt update && apt install -y raspi-gpio && rm -rf /var/lib/apt/lists/*
+# Update package lists and install necessary tools
+RUN apt update && apt install -y \
+    raspberrypi-kernel \
+    raspberrypi-bootloader \
+    raspi-gpio \
+    && rm -rf /var/lib/apt/lists/*
 
+# Copy the fan control script
 COPY fancontrol.py /app/fancontrol.py
 
+# Install Python dependencies
 RUN pip install RPi.GPIO
 
+# Run the script
 CMD ["python3", "/app/fancontrol.py"]
