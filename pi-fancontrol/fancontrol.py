@@ -48,4 +48,4 @@ if __name__ == "__main__":
             time.sleep(5)  # Check every 5 seconds
     except KeyboardInterrupt:
         fan.close()
-        print("Fan control stopped.")s
+        print("Fan control stopped.")
