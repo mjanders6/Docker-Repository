@@ -20,6 +20,19 @@ app.get("/cpu-temperature", async (req, res) => {
     }
 });
 
+// Route to get CPU temperature and humidity
+app.get("/environment", async (req, res) => {
+    try {
+        const temperature = getCpuTemperature();
+        const sensors = await si.dhtSensors(); // Get humidity if available
+        const humidity = sensors?.main?.humidity || "N/A"; // If no sensor, return N/A
+
+        res.json({ temperature, humidity });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to retrieve environmental data" });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
