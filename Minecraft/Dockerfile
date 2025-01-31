@@ -55,4 +55,5 @@ RUN echo "eula=${EULA}" > /opt/minecraft/server/eula.txt
 
 # Set the default command to run the Minecraft server
 WORKDIR /opt/minecraft/server
+
 CMD ["./start.sh"]
