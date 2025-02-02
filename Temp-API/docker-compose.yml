@@ -2,6 +2,11 @@ services:
   cpu-temp-api:
     image: cpu-temp-api:latest
     container_name: cpu-temp-api
+    deploy:
+      mode: global
+      replicas: 4
+      restart_policy:
+        condition: on-failure
     environment:
       - EULA=TRUE
       - PUID=1000
@@ -13,6 +18,4 @@ services:
       - ./ecosystem.config.js:/app/ecosystem.config.js
       - /sys/class/thermal:/sys/class/thermal
     privileged: true
-    deploy:
-      mode: global
     restart: unless-stopped
