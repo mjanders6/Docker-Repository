@@ -13,4 +13,6 @@ services:
       - ./ecosystem.config.js:/app/ecosystem.config.js
       - /sys/class/thermal:/sys/class/thermal
     privileged: true
+    deploy:
+      mode: global
     restart: unless-stopped
