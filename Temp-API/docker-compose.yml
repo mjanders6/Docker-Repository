@@ -1,12 +1,12 @@
 services:
   cpu-temp-api:
-    image: cpu-temp-api:latest
-    container_name: cpu-temp-api
+    image: localhost:5000/cpu-temp-api
+    # container_name: cpu-temp-api
     deploy:
       mode: global
-      replicas: 4
-      restart_policy:
-        condition: on-failure
+      # replicas: 4
+      # restart_policy:
+      #   condition: on-failure
     environment:
       - EULA=TRUE
       - PUID=1000
@@ -14,8 +14,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./server.js:/app/server.js
-      - ./ecosystem.config.js:/app/ecosystem.config.js
+      # - ./server.js:/app/server.js
+      # - ./ecosystem.config.js:/app/ecosystem.config.js
       - /sys/class/thermal:/sys/class/thermal
     privileged: true
     restart: unless-stopped
