@@ -4,7 +4,7 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/cpu-temperature", async (req, res) => {
+const getTemp = () => {
     try {
         const tempPath = "/sys/class/thermal/thermal_zone0/temp";
         if (!fs.existsSync(tempPath)) {
@@ -14,6 +14,15 @@ app.get("/cpu-temperature", async (req, res) => {
         const temp = fs.readFileSync(tempPath, "utf8").trim();
         const temperature = parseFloat(temp) / 1000; // Convert from millidegrees to Celsius
 
+        res.json({ temperature });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to retrieve CPU temperature" });
+    }
+}
+
+app.get("/cpu-temperature", async (req, res) => {
+    try {
+        const temperature = getTemp();
         res.json({ temperature });
     } catch (error) {
         res.status(500).json({ error: "Failed to retrieve CPU temperature" });
