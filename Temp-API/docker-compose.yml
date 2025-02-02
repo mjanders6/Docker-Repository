@@ -1,6 +1,15 @@
 services:
   cpu-temp-api:
-    build: .
+    image: cpu-temp-api:latest
+    container_name: cpu-temp-api
+    environment:
+      - EULA=TRUE
+      - PUID=1000
+      - PGID=1000
     ports:
       - "3000:3000"
+    volumes:
+      -./server.js:/app/server.js
+      -./ecosystem.config.js:/app/ecosystem.config.js
     privileged: true
+    restart: unless-stopped
