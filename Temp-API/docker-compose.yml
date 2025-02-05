@@ -2,12 +2,10 @@ services:
   cpu-temp-api:
     #image: localhost:5000/cpu-temp-api
     image: mjanders6/cpu-temp-api:latest
-    # container_name: cpu-temp-api
+    container_name: cpu-temp-api
     deploy:
       mode: global
-      # replicas: 4
-      # restart_policy:
-      #   condition: on-failure
+    network_mode: "host"  # Disables Swarm routing mesh
     environment:
       - EULA=TRUE
       - PUID=1000
