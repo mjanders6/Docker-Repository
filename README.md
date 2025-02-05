@@ -9,7 +9,8 @@ This Repository is to manage home lab Docker files and compose files
 
 ## Temp-API
 - Ensure ports for the following are opened
-    -- sudo ufw allow 2377/tcp
-    -- sudo ufw allow 7946/tcp
-    -- sudo ufw allow 7946/udp
-    -- sudo ufw allow 4789/udp
+
+sudo ufw allow 2377/tcp
+sudo ufw allow 7946/tcp
+sudo ufw allow 7946/udp
+sudo ufw allow 4789/udp
