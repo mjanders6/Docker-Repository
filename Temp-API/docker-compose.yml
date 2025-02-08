@@ -1,6 +1,8 @@
 services:
   cpu-temp-api:
     image: mjanders6/cpu-temp-api:latest
+    networks:
+      - nodejs_network
     deploy:
       mode: global
     environment:
@@ -8,14 +10,13 @@ services:
       - PUID=1000
       - PGID=1000
     ports:
-      - target: 3000
-      - published: 3000
-      - protocol: tcp
-      - mode: host
+      - "3000:3000"
     volumes:
       # - ./server.js:/app/server.js
       # - ./ecosystem.config.js:/app/ecosystem.config.js
       - /sys/class/thermal:/sys/class/thermal
       - /etc/hostname:/etc/hostname
-    privileged: true
-    restart: unless-stopped
+
+networks:
+  nodejs_network:
+    external: true
