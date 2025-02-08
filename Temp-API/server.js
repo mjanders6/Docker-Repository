@@ -4,7 +4,7 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 const TEMP_FILE = '/sys/class/thermal/thermal_zone0/temp';
-const HOST_FILE = '/etc/hosts';
+const HOST_FILE = '/etc/hostname';
 
 function getCPUTemperature() {
     try {
@@ -22,7 +22,7 @@ app.get('/cpu-temperature', (req, res) => {
     const hostData = fs.readFileSync(HOST_FILE, 'utf8');
 
     if (temp !== null) {
-        res.json({ temperature: temp, unit: 'Celsius', host: hostData});
+        res.json([{ temperature: temp, unit: 'Celsius'}, {host: hostData}]);
     } else {
         res.status(500).json({ error: 'Unable to read CPU temperature' });
     }
