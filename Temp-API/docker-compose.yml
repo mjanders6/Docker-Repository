@@ -1,6 +1,26 @@
 services:
   cpu-temp-api:
-    build: .
+    image: mjanders6/cpu-temp-api:latest
+    networks:
+      - nodejs_network
+    deploy:
+      mode: global
+    environment:
+      - EULA=TRUE
+      - PUID=1000
+      - PGID=1000
     ports:
-      - "3000:3000"
-    privileged: true
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
+    volumes:
+      # - ./server.js:/app/server.js
+      # - ./ecosystem.config.js:/app/ecosystem.config.js
+      - /sys/class/thermal:/sys/class/thermal
+      - /etc/hostname:/etc/hostname
+
+
+networks:
+  nodejs_network:
+    driver: overlay

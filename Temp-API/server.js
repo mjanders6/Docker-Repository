@@ -1,25 +1,33 @@
-const express = require("express");
-const fs = require("fs");
+const express = require('express');
+const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+const TEMP_FILE = '/sys/class/thermal/thermal_zone0/temp';
+const HOST_FILE = '/etc/hostname';
 
-app.get("/cpu-temperature", async (req, res) => {
+function getCPUTemperature() {
     try {
-        const tempPath = "/sys/class/thermal/thermal_zone0/temp";
-        if (!fs.existsSync(tempPath)) {
-            return res.status(500).json({ error: "Temperature file not found" });
-        }
-
-        const temp = fs.readFileSync(tempPath, "utf8").trim();
-        const temperature = parseFloat(temp) / 1000; // Convert from millidegrees to Celsius
-
-        res.json({ temperature });
+        const tempData = fs.readFileSync(TEMP_FILE, 'utf8');
+        const tempCelsius = parseFloat(tempData) / 1000;
+        return tempCelsius;
     } catch (error) {
-        res.status(500).json({ error: "Failed to retrieve CPU temperature" });
+        console.error('Error reading CPU temperature:', error);
+        return null;
+    }
+}
+
+app.get('/cpu-temperature', (req, res) => {
+    const temp = getCPUTemperature();
+    const hostData = fs.readFileSync(HOST_FILE, 'utf8');
+
+    if (temp !== null) {
+        res.json([{ temperature: temp, unit: 'Celsius'}, {host: hostData}]);
+    } else {
+        res.status(500).json({ error: 'Unable to read CPU temperature' });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
