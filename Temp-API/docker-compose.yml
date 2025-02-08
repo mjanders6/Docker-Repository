@@ -11,7 +11,7 @@ services:
       - PGID=1000
     ports:
       - target: 3000
-        publishedd: 3000
+        published: 3000
         protocol: tcp
         mode: host
     volumes:
