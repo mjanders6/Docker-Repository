@@ -22,7 +22,7 @@ app.get('/cpu-temperature', (req, res) => {
     const hostData = fs.readFileSync(HOST_FILE, 'utf8');
 
     if (temp !== null) {
-        res.json([{ temperature: temp, unit: 'Celsius'}, {host: hostData}]);
+        res.json({ host: hostData, temperature: temp, unit: 'Celsius'});
     } else {
         res.status(500).json({ error: 'Unable to read CPU temperature' });
     }
