@@ -1,3 +1,3 @@
 #!/bin/bash
 # Start Minecraft server
-java -Xmx1024M -Xms1024M -jar server.jar nogui
+java -Xmx4096M -Xms2048M -jar server.jar nogui

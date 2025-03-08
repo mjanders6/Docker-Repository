@@ -14,4 +14,4 @@ services:
     restart: unless-stopped
 volumes:
   server:
-    external: true
+#    external: true

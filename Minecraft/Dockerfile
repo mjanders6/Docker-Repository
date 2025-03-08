@@ -46,7 +46,9 @@ COPY ./config/server.properties /opt/minecraft/server/server.properties
 
 # Switch to root to mame the start.sh executable 
 USER root
-RUN chmod +x start.sh
+RUN chmod +x /opt/minecraft/server/start.sh
+RUN chown minecraft:minecraft start.sh
+RUN chown minecraft:minecraft server.properties
 
 USER minecraft
 
@@ -55,5 +57,7 @@ RUN echo "eula=${EULA}" > /opt/minecraft/server/eula.txt
 
 # Set the default command to run the Minecraft server
 WORKDIR /opt/minecraft/server
+
+#ENTRYPOINT ["/opt/minecraft/server/start.sh"]
 
 CMD ["./start.sh"]
