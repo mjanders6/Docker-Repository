@@ -11,7 +11,16 @@ services:
     user: "minecraft:minecraft"
     volumes:
       - server:/opt/minecraft
-    restart: unless-stopped
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure 
+      resources:
+        limits:
+          memory: 3G
+    # Comment out when using swarm
+    # restart: unless-stopped
 volumes:
   server:
-#    external: true
+    # When using swarm with docker compose. If not, comment out 
+    external: true
