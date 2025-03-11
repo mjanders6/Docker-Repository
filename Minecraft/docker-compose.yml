@@ -1,6 +1,7 @@
 services:
   minecraft:
     image: mjanders6/minecraft:latest # cant be a local image
+    # Comment out when using swarm
     # container_name: minecraft
     environment:
       - EULA=TRUE
@@ -14,7 +15,8 @@ services:
     deploy:
       placement:
         constraints:
-          - "node.hostname == rpi0-server"  # Replace with your node's hostname
+          # Replace with your node's hostname
+          - "node.hostname == rpi0-server"  
       resources:
         limits:
           memory: 3G
