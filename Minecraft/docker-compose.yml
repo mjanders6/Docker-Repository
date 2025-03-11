@@ -1,6 +1,6 @@
 services:
   minecraft:
-    image: minecraft-server:latest
+    image: mjanders6/cpu-temp-api:latest # cant be a local image
     # container_name: minecraft
     environment:
       - EULA=TRUE
