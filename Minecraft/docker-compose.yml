@@ -12,8 +12,9 @@ services:
     volumes:
       - server:/opt/minecraft
     deploy:
-      mode: replicated 
-      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == rp0-server"  # Replace with your node's hostname
       resources:
         limits:
           memory: 3G
