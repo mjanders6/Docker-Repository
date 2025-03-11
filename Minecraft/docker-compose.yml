@@ -1,6 +1,6 @@
 services:
   minecraft:
-    image: mjanders6/cpu-temp-api:latest # cant be a local image
+    image: mjanders6/minecraft:latest # cant be a local image
     # container_name: minecraft
     environment:
       - EULA=TRUE
@@ -23,4 +23,4 @@ services:
 volumes:
   server:
     # When using swarm with docker compose. If not, comment out 
-    #external: true
+    external: true
