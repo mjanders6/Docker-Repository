@@ -12,12 +12,11 @@ services:
     volumes:
       - server:/opt/minecraft
     deploy:
+      mode: replicated 
       replicas: 1
-      restart_policy:
-        condition: on-failure 
-      resources:
-        limits:
-          memory: 3G
+      # resources:
+      #   limits:
+      #     memory: 3G
     # Comment out when using swarm
     # restart: unless-stopped
 volumes:
