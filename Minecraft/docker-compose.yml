@@ -14,7 +14,7 @@ services:
     deploy:
       placement:
         constraints:
-          - "node.hostname == rp0-server"  # Replace with your node's hostname
+          - "node.hostname == rpi0-server"  # Replace with your node's hostname
       resources:
         limits:
           memory: 3G
