@@ -1,7 +1,7 @@
 services:
   minecraft:
     image: minecraft-server:latest
-    container_name: minecraft
+    # container_name: minecraft
     environment:
       - EULA=TRUE
       - PUID=1000
@@ -14,9 +14,9 @@ services:
     deploy:
       mode: replicated 
       replicas: 1
-      # resources:
-      #   limits:
-      #     memory: 3G
+      resources:
+        limits:
+          memory: 3G
     # Comment out when using swarm
     # restart: unless-stopped
 volumes:
