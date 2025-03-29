@@ -23,6 +23,6 @@ services:
     # Comment out when using swarm
     # restart: unless-stopped
 volumes:
-  server:
+  minecraft_server:
     # When using swarm with docker compose. If not, comment out 
     external: true
