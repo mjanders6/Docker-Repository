@@ -6,8 +6,7 @@ This Repository is to manage home lab Docker files and compose files
 - sudo service docker restart
 
 ## Minecraft
-### Link to initial project for hard python installer:
-[Minecraft-Installer](https://github.com/mjanders6/Minecraft-Installer)
+### Link to initial project for hard python installer: [Minecraft-Installer](https://github.com/mjanders6/Minecraft-Installer)
 
 ### Docker Image
 This is the Docker image I created to run on my Raspberry Pi 4/5 is hosted at [mjanders6/minecraft](https://hub.docker.com/repository/docker/mjanders6/minecraft/general). The Dockerfile is included in the Minecraft repository if a custom image is needed. 
