@@ -16,6 +16,8 @@ Get the server link at: [Java Edition server](https://www.minecraft.net/en-us/do
 
 Current link to MInecraft Java jar file:
 - [1.21.5](https://piston-data.mojang.com/v1/objects/e6ec2f64e6080b9b5d9b471b291c33cc7f509733/server.jar)
+- [1.21.6](https://piston-data.mojang.com/v1/objects/6e64dcabba3c01a7271b4fa6bd898483b794c59b/server.jar)
+
 
 ## Temp-API
 Ensure ports for the following are opened
