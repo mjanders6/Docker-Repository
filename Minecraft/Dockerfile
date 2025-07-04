@@ -38,7 +38,7 @@ EXPOSE ${SERVER_PORT}
 
 WORKDIR /opt/minecraft/server
 # Download and prepare Minecraft server
-RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/6e64dcabba3c01a7271b4fa6bd898483b794c59b/server.jar
+RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/05e4b48fbc01f0385adb74bcff9751d34552486c/server.jar
 
 # Copy start script to container
 COPY ./config/start.sh /opt/minecraft/server/start.sh
