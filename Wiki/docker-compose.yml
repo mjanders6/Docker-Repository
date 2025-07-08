@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   wikijs:
     build: .
@@ -9,15 +7,24 @@ services:
     volumes:
       - wikidata:/app
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: wikijs
+      DB_USER: wiki
+      DB_PASS: strongpassword
+    depends_on:
+      - db
     restart: unless-stopped
+
   db:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_DB=wikijs
-      POSTGRES_USER=wiki
-      POSTGRES_PASSWORD=strongpassword
+      POSTGRES_DB: wikijs
+      POSTGRES_USER: wiki
+      POSTGRES_PASSWORD: strongpassword
     volumes:
       - pgdata:/var/lib/postgresql/data
 
