@@ -25,8 +25,8 @@ services:
       - "5432:5432"
     restart: unless-stopped
     environment:
-      POSTGRES_DB: wiki
-      POSTGRES_USER: wikijs
+      POSTGRES_DB: wikijs
+      POSTGRES_USER: wiki
       POSTGRES_PASSWORD: strongpassword
     volumes:
       - pgdata:/var/lib/postgresql/data
