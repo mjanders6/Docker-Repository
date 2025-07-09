@@ -5,6 +5,7 @@ services:
     ports:
       - "3080:3000"
     volumes:
+      - ./config.yml:/app/config.yml
       - wikidata:/app
     environment:
       NODE_ENV: production
