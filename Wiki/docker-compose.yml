@@ -1,36 +1,31 @@
 services:
-  wikijs:
-    build: .
-    container_name: wikijs
-    ports:
-      - "3080:3000"
-    volumes:
-      - ./config.yml:/app/config.yml
-      - wikidata:/app
+
+  db:
+    image: postgres:15-alpine
     environment:
-      NODE_ENV: production
+      POSTGRES_DB: wiki
+      POSTGRES_PASSWORD: wikijsrocks
+      POSTGRES_USER: wikijs
+    logging:
+      driver: none
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  wiki:
+    image: ghcr.io/requarks/wiki:2
+    depends_on:
+      - db
+    environment:
       DB_TYPE: postgres
       DB_HOST: db
       DB_PORT: 5432
-      DB_NAME: wikijs
-      DB_USER: wiki
-      DB_PASS: strongpassword
-    depends_on:
-      - db
+      DB_USER: wikijs
+      DB_PASS: wikijsrocks
+      DB_NAME: wiki
     restart: unless-stopped
-
-  db:
-    image: postgres:15
-    ports: 
-      - "5432:5432"
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: wikijs
-      POSTGRES_USER: wiki
-      POSTGRES_PASSWORD: strongpassword
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "80:3000"
 
 volumes:
-  wikidata:
-  pgdata:
+  db-data:
