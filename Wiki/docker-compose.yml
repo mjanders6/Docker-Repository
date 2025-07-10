@@ -28,8 +28,8 @@ services:
     volumes:
       - ./config.yml:/wiki/config.yml:ro
     restart: unless-stopped
-    ports:
-      - "80:3000"
+    expose:
+      - "3000"
 
 
   nginx:
