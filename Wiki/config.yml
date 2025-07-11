@@ -6,9 +6,9 @@ db:
   type: postgres
   host: db
   port: 5432
-  user: ${POSTGRES_USER}
-  pass: ${POSTGRES_PASSWORD}
-  db: ${POSTGRES_DB}
+  user: wiki
+  pass: wikijsrocks
+  db: wikijs
 
 logLevel: info
 
