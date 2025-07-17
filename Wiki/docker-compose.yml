@@ -11,6 +11,7 @@ services:
 
   wikijs:
     image: requarks/wiki:2
+    restart: unless-stopped
     depends_on:
       - db
     environment:
