@@ -21,7 +21,7 @@ services:
     #     limits:
     #       memory: 3G
     # Comment out when using swarm
-    # restart: unless-stopped
+    restart: unless-stopped
 volumes:
   minecraft_server:
     # When using swarm with docker compose. If not, comment out 
