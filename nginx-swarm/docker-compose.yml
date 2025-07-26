@@ -1,84 +1,25 @@
 services:
-  nginx-rpi0:
+  nginx:
     image: nginx:alpine
+    deploy:
+      mode: global  # One nginx container per node
     configs:
-      - source: rpi0-nginx.conf
+      - source: ${NODE_NAME}-nginx.conf
         target: /etc/nginx/nginx.conf
     secrets:
-      - source: rpi0.crt
-        target: /etc/nginx/certs/server.crt
-        mode: 0444
-      - source: rpi0.key
-        target: /etc/nginx/certs/server.key
-        mode: 0400
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == rpi0-server
+      - source: ${NODE_NAME}.crt
+        target: /etc/ssl/certs/server.crt
+      - source: ${NODE_NAME}.key
+        target: /etc/ssl/private/server.key
     ports:
-      - "80:80"
       - "443:443"
-
-  nginx-rpi1:
-    image: nginx:alpine
+      - "80:80"
+    volumes:
+      - /etc/nginx/conf.d  # Use default conf.d if needed
+    environment:
+      - NODE_NAME={{.Node.Hostname}}
     configs:
-      - source: rpi1-nginx.conf
-        target: /etc/nginx/nginx.conf
-    secrets:
-      - source: rpi1.crt
-        target: /etc/nginx/certs/server.crt
-        mode: 0444
-      - source: rpi1.key
-        target: /etc/nginx/certs/server.key
-        mode: 0400
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == rpi1-server
-    ports:
-      - "81:80"
-      - "444:443"
-
-  nginx-rpi2:
-    image: nginx:alpine
-    configs:
-      - source: rpi2-nginx.conf
-        target: /etc/nginx/nginx.conf
-    secrets:
-      - source: rpi2.crt
-        target: /etc/nginx/certs/server.crt
-        mode: 0444
-      - source: rpi2.key
-        target: /etc/nginx/certs/server.key
-        mode: 0400
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == rpi2-server
-    ports:
-      - "82:80"
-      - "445:443"
-
-  nginx-rpi3:
-    image: nginx:alpine
-    configs:
-      - source: rpi3-nginx.conf
-        target: /etc/nginx/nginx.conf
-    secrets:
-      - source: rpi3.crt
-        target: /etc/nginx/certs/server.crt
-        mode: 0444
-      - source: rpi3.key
-        target: /etc/nginx/certs/server.key
-        mode: 0400
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == rpi3-server
-    ports:
-      - "83:80"
-      - "446:443"
-
+      - default.conf
 configs:
   rpi0-nginx.conf:
     external: true
@@ -88,6 +29,8 @@ configs:
     external: true
   rpi3-nginx.conf:
     external: true
+  default.conf:
+    file: ./configs/default.conf
 
 secrets:
   rpi0.crt:
