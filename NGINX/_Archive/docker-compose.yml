@@ -1,0 +1,96 @@
+services:
+  nginx-rpi0:
+    image: nginx:alpine
+    deploy:
+      placement:
+        constraints: [node.hostname == rpi0-server]
+    ports:
+      - "8080:80"
+      - "8443:443"
+    configs:
+      - source: nginx_conf_rpi0
+        target: /etc/nginx/nginx.conf
+      - source: site_conf_rpi0
+        target: /etc/nginx/conf.d/site.conf
+    secrets:
+      - source: cert_fullchain_rpi0
+        target: /etc/nginx/certs/fullchain.pem
+      - source: cert_privkey_rpi0
+        target: /etc/nginx/certs/privkey.pem
+
+  nginx-rpi1:
+    image: nginx:alpine
+    deploy:
+      placement:
+        constraints: [node.hostname == rpi1-server]
+    ports:
+      - "8081:80"
+      - "8444:443"
+    configs:
+      - source: nginx_conf_rpi1
+        target: /etc/nginx/nginx.conf
+      - source: site_conf_rpi1
+        target: /etc/nginx/conf.d/site.conf
+    secrets:
+      - source: cert_fullchain_rpi1
+        target: /etc/nginx/certs/fullchain.pem
+      - source: cert_privkey_rpi1
+        target: /etc/nginx/certs/privkey.pem
+
+  nginx-rpi2:
+    image: nginx:alpine
+    deploy:
+      placement:
+        constraints: [node.hostname == rpi2-server]
+    ports:
+      - "8081:80"
+      - "8444:443"
+    configs:
+      - source: nginx_conf_rpi2
+        target: /etc/nginx/nginx.conf
+      - source: site_conf_rpi2
+        target: /etc/nginx/conf.d/site.conf
+    secrets:
+      - source: cert_fullchain_rpi2
+        target: /etc/nginx/certs/fullchain.pem
+      - source: cert_privkey_rpi2
+        target: /etc/nginx/certs/privkey.pem
+
+  nginx-rpi3:
+    image: nginx:alpine
+    deploy:
+      placement:
+        constraints: [node.hostname == rpi3-server]
+    ports:
+      - "8081:80"
+      - "8444:443"
+    configs:
+      - source: nginx_conf_rpi3
+        target: /etc/nginx/nginx.conf
+      - source: site_conf_rpi3
+        target: /etc/nginx/conf.d/site.conf
+    secrets:
+      - source: cert_fullchain_rpi3
+        target: /etc/nginx/certs/fullchain.pem
+      - source: cert_privkey_rpi3
+        target: /etc/nginx/certs/privkey.pem
+
+configs:
+  nginx_conf_rpi0:
+    external: true
+  site_conf_rpi0:
+    external: true
+  nginx_conf_rpi1:
+    external: true
+  site_conf_rpi1:
+    external: true
+
+secrets:
+  cert_fullchain_rpi0:
+    external: true
+  cert_privkey_rpi0:
+    external: true
+  cert_fullchain_rpi1:
+    external: true
+  cert_privkey_rpi1:
+    external: true

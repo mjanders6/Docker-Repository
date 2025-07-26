@@ -1,96 +1,108 @@
 services:
   nginx-rpi0:
     image: nginx:alpine
+    configs:
+      - source: rpi0-nginx.conf
+        target: /etc/nginx/nginx.conf
+    secrets:
+      - source: rpi0.crt
+        target: /etc/nginx/certs/server.crt
+        mode: 0444
+      - source: rpi0.key
+        target: /etc/nginx/certs/server.key
+        mode: 0400
     deploy:
       placement:
-        constraints: [node.hostname == rpi0-server]
+        constraints:
+          - node.hostname == rpi0-server
     ports:
-      - "8080:80"
-      - "8443:443"
-    configs:
-      - source: nginx_conf_rpi0
-        target: /etc/nginx/nginx.conf
-      - source: site_conf_rpi0
-        target: /etc/nginx/conf.d/site.conf
-    secrets:
-      - source: cert_fullchain_rpi0
-        target: /etc/nginx/certs/fullchain.pem
-      - source: cert_privkey_rpi0
-        target: /etc/nginx/certs/privkey.pem
+      - "80:80"
+      - "443:443"
 
   nginx-rpi1:
     image: nginx:alpine
+    configs:
+      - source: rpi1-nginx.conf
+        target: /etc/nginx/nginx.conf
+    secrets:
+      - source: rpi1.crt
+        target: /etc/nginx/certs/server.crt
+        mode: 0444
+      - source: rpi1.key
+        target: /etc/nginx/certs/server.key
+        mode: 0400
     deploy:
       placement:
-        constraints: [node.hostname == rpi1-server]
+        constraints:
+          - node.hostname == rpi1-server
     ports:
-      - "8081:80"
-      - "8444:443"
-    configs:
-      - source: nginx_conf_rpi1
-        target: /etc/nginx/nginx.conf
-      - source: site_conf_rpi1
-        target: /etc/nginx/conf.d/site.conf
-    secrets:
-      - source: cert_fullchain_rpi1
-        target: /etc/nginx/certs/fullchain.pem
-      - source: cert_privkey_rpi1
-        target: /etc/nginx/certs/privkey.pem
+      - "81:80"
+      - "444:443"
 
   nginx-rpi2:
     image: nginx:alpine
+    configs:
+      - source: rpi2-nginx.conf
+        target: /etc/nginx/nginx.conf
+    secrets:
+      - source: rpi2.crt
+        target: /etc/nginx/certs/server.crt
+        mode: 0444
+      - source: rpi2.key
+        target: /etc/nginx/certs/server.key
+        mode: 0400
     deploy:
       placement:
-        constraints: [node.hostname == rpi2-server]
+        constraints:
+          - node.hostname == rpi2-server
     ports:
-      - "8081:80"
-      - "8444:443"
-    configs:
-      - source: nginx_conf_rpi2
-        target: /etc/nginx/nginx.conf
-      - source: site_conf_rpi2
-        target: /etc/nginx/conf.d/site.conf
-    secrets:
-      - source: cert_fullchain_rpi2
-        target: /etc/nginx/certs/fullchain.pem
-      - source: cert_privkey_rpi2
-        target: /etc/nginx/certs/privkey.pem
+      - "82:80"
+      - "445:443"
 
   nginx-rpi3:
     image: nginx:alpine
+    configs:
+      - source: rpi3-nginx.conf
+        target: /etc/nginx/nginx.conf
+    secrets:
+      - source: rpi3.crt
+        target: /etc/nginx/certs/server.crt
+        mode: 0444
+      - source: rpi3.key
+        target: /etc/nginx/certs/server.key
+        mode: 0400
     deploy:
       placement:
-        constraints: [node.hostname == rpi3-server]
+        constraints:
+          - node.hostname == rpi3-server
     ports:
-      - "8081:80"
-      - "8444:443"
-    configs:
-      - source: nginx_conf_rpi3
-        target: /etc/nginx/nginx.conf
-      - source: site_conf_rpi3
-        target: /etc/nginx/conf.d/site.conf
-    secrets:
-      - source: cert_fullchain_rpi3
-        target: /etc/nginx/certs/fullchain.pem
-      - source: cert_privkey_rpi3
-        target: /etc/nginx/certs/privkey.pem
+      - "83:80"
+      - "446:443"
 
 configs:
-  nginx_conf_rpi0:
+  rpi0-nginx.conf:
     external: true
-  site_conf_rpi0:
+  rpi1-nginx.conf:
     external: true
-  nginx_conf_rpi1:
+  rpi2-nginx.conf:
     external: true
-  site_conf_rpi1:
+  rpi3-nginx.conf:
     external: true
 
 secrets:
-  cert_fullchain_rpi0:
+  rpi0.crt:
     external: true
-  cert_privkey_rpi0:
+  rpi0.key:
     external: true
-  cert_fullchain_rpi1:
+  rpi1.crt:
     external: true
-  cert_privkey_rpi1:
+  rpi1.key:
+    external: true
+  rpi2.crt:
+    external: true
+  rpi2.key:
+    external: true
+  rpi3.crt:
+    external: true
+  rpi3.key:
     external: true
