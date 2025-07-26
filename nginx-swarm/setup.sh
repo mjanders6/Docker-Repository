@@ -5,6 +5,8 @@ set -e
 mkdir -p nginx-swarm/configs
 mkdir -p nginx-swarm/certs
 
+./setup-compose.sh
+
 NODES=(rpi0 rpi1 rpi2 rpi3)
 
 # Generate nginx.conf files
@@ -54,11 +56,15 @@ for NODE in "${NODES[@]}"; do
 done
 
 # Create Docker configs
+# Remove configs
+# docker config rm rpi0-nginx.conf rpi1-nginx.conf rpi2-nginx.conf rpi3-nginx.conf
 for NODE in "${NODES[@]}"; do
   docker config create ${NODE}-nginx.conf nginx-swarm/configs/${NODE}-nginx.conf || true
 done
 
 # Create Docker secrets for certs
+# Remove certs
+# docker secret rm rpi0.crt rpi0.key rpi1.crt rpi1.key rpi2.crt rpi2.key rpi3.crt rpi3.key
 for NODE in "${NODES[@]}"; do
   docker secret create ${NODE}.crt nginx-swarm/certs/${NODE}.crt || true
   docker secret create ${NODE}.key nginx-swarm/certs/${NODE}.key || true
