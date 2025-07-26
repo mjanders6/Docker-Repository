@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Output YAML file
-OUTPUT_FILE="docker-compose.yml"
+OUTPUT_FILE="./nginx-swarm/docker-compose.yml"
 NODES=(rpi0 rpi1 rpi2 rpi3)
 
 # Start with top-level services section
