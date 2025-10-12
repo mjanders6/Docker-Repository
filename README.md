@@ -19,6 +19,7 @@ Current link to MInecraft Java jar file:
 - [1.21.6](https://piston-data.mojang.com/v1/objects/6e64dcabba3c01a7271b4fa6bd898483b794c59b/server.jar)
 - [1.21.7](https://piston-data.mojang.com/v1/objects/05e4b48fbc01f0385adb74bcff9751d34552486c/server.jar)
 - [1.21.8](https://piston-data.mojang.com/v1/objects/6bce4ef400e4efaa63a13d5e6f6b500be969ef81/server.jar)
+- [1.21.10](https://piston-data.mojang.com/v1/objects/95495a7f485eedd84ce928cef5e223b757d2f764/server.jar)
 
 
 ## Temp-API
