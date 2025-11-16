@@ -7,9 +7,6 @@ services:
       - EULA=TRUE
       - PUID=1000
       - PGID=1000
-      - GAMEMODE=${GAMEMODE}
-      - ENABLERCON=${ENABLERCON}
-      - RCONPASSWORD=${RCONPASSWORD}
     ports:
       - "25565:25565"
     user: "minecraft:minecraft"
