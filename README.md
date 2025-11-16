@@ -11,6 +11,12 @@ This Repository is to manage home lab Docker files and compose files
 ### Docker Image
 This is the Docker image I created to run on my Raspberry Pi 4/5 is hosted at [mjanders6/minecraft](https://hub.docker.com/repository/docker/mjanders6/minecraft/general). The Dockerfile is included in the Minecraft repository if a custom image is needed. 
 
+### Environment Variables
+- GAME_MODE=creative
+- SERVER_IP=
+- RCON_PASSWORD=up-to-you
+
+
 ### Minecraft Jar Files: 
 Get the server link at: [Java Edition server](https://www.minecraft.net/en-us/download/server)
 

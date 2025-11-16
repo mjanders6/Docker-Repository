@@ -42,13 +42,13 @@ RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/95495a7f485eedd
 
 # Copy start script to container
 COPY ./config/start.sh /opt/minecraft/server/start.sh
-COPY ./config/server.properties /opt/minecraft/server/server.properties
+COPY ./config/server.properties.template /opt/minecraft/server/server.properties.template
 
 # Switch to root to mame the start.sh executable 
 USER root
 RUN chmod +x /opt/minecraft/server/start.sh
 RUN chown minecraft:minecraft start.sh
-RUN chown minecraft:minecraft server.properties
+RUN chown minecraft:minecraft server.properties.template
 
 USER minecraft
 
