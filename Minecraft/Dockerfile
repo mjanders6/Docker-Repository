@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gcc \
     tzdata \
+    gettext-base \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add a non-root user to run the Minecraft server
