@@ -1,13 +1,37 @@
+version: "3.9"
+
+services:
   trilium:
     image: ghcr.io/zadam/trilium:latest
     container_name: trilium
     restart: unless-stopped
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
-      - TRILIUM_TRUSTED_PROXIES=0.0.0.0/0
     volumes:
       - trilium-data:/home/node/trilium-data
     networks:
       - proxy
     expose:
       - "8080"
+
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"     # NPM admin UI
+      - "443:443"
+    volumes:
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy
+
+networks:
+  proxy:
+
+volumes:
+  trilium-data:
+  npm-data:
+  npm-letsencrypt:
