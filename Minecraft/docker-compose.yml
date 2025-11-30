@@ -15,17 +15,17 @@ services:
     user: "minecraft:minecraft"
     volumes:
       - minecraft_server:/opt/minecraft
-    # deploy:
-    #   placement:
-    #     constraints:
-    #       # Replace with your node's hostname
-    #       - "node.hostname == rpi0-server"  
-    #   resources:
-    #     limits:
-    #       memory: 3G
+    deploy:
+      placement:
+         constraints:
+           # Replace with your node's hostname
+            - "node.hostname == rpi0-server"  
+      resources:
+         limits:
+           memory: 3G
     # Comment out when using swarm
-    restart: unless-stopped
+    #restart: unless-stopped
 volumes:
   minecraft_server:
     # When using swarm with docker compose. If not, comment out 
-    # external: true
+     external: true
