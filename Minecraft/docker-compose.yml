@@ -19,7 +19,7 @@ services:
       placement:
          constraints:
            # Replace with your node's hostname
-            - "node.hostname == rpi0-server"  
+            - "node.hostname == rpi1-server"  
       resources:
          limits:
            memory: 3G
