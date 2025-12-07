@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
 
 # Add a non-root user to run the Minecraft server
 RUN useradd -r -m -U -d /opt/minecraft -s /bin/bash minecraft
+#RUN groupadd -g $HOST_GID minecraft && useradd -u $HOST_UID -g minecraft -s /bin/bash minecraft
 
 # Switch to the non-root user
 USER minecraft
@@ -50,6 +51,7 @@ USER root
 RUN chmod +x /opt/minecraft/server/start.sh
 RUN chown minecraft:minecraft start.sh
 RUN chown minecraft:minecraft server.properties.template
+RUN chown -R minecraft:minecraft .
 
 USER minecraft
 
