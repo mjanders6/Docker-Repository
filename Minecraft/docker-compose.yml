@@ -15,6 +15,7 @@ services:
     user: "minecraft:minecraft"
     volumes:
       - minecraft_server:/opt/minecraft
+      - ./server.jar:/opt/minecraft/server/server.jar:ro
     #deploy:
     #  placement:
     #     constraints:
