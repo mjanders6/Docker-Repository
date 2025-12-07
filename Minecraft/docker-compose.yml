@@ -16,14 +16,14 @@ services:
     volumes:
       - minecraft_server:/opt/minecraft
       - ./server.jar:/opt/minecraft/server/server.jar:ro
-    deploy:
-      placement:
-         constraints:
+    #deploy:
+    #  placement:
+    #     constraints:
            # Replace with your node's hostname
-            - "node.hostname == rpi1-server"  
-      resources:
-         limits:
-           memory: 3G
+    #        - "node.hostname == rpi1-server"  
+    #  resources:
+    #     limits:
+    #       memory: 3G
     # Comment out when using swarm
     #restart: unless-stopped
 volumes:
