@@ -48,6 +48,10 @@ COPY ./config/server.properties.template /opt/minecraft/server/server.properties
 
 # Switch to root to mame the start.sh executable 
 USER root
+
+# Ensure we're working in the correct directory before chmod/chown
+WORKDIR /opt/minecraft/server
+
 RUN chmod +x /opt/minecraft/server/start.sh
 RUN chown minecraft:minecraft start.sh
 RUN chown minecraft:minecraft server.properties.template
