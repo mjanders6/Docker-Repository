@@ -1,0 +1,32 @@
+services:
+  minecraft:
+    image: mjanders6/minecraft:latest # cant be a local image
+    # Comment out when using swarm
+    # container_name: minecraft
+    environment:
+      - EULA=TRUE
+      - PUID=1000
+      - PGID=1000
+      - RCON_PASSWORD=${RCON_PASSWORD}
+      - GAME_MODE=${GAME_MODE}
+      - SERVER_IP=${SERVER_IP}
+    ports:
+      - "25565:25565"
+    user: "minecraft:minecraft"
+    volumes:
+      - minecraft_server:/opt/minecraft
+      - ./server.jar:/opt/minecraft/server/server.jar:ro
+    #deploy:
+    #  placement:
+    #     constraints:
+           # Replace with your node's hostname
+    #        - "node.hostname == rpi1-server"  
+    #  resources:
+    #     limits:
+    #       memory: 3G
+    # Comment out when using swarm
+    #restart: unless-stopped
+volumes:
+  minecraft_server:
+    # When using swarm with docker compose. If not, comment out 
+     external: true

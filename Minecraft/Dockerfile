@@ -1,11 +1,21 @@
-# Use the official Ubuntu 22.04 image as the base
 FROM ubuntu:22.04
 
-# Set environment variable to avoid prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
+ENV MC_UID=1000 \
+    MC_GID=1000 \
+    MC_USER=minecraft \
+    MC_GROUP=minecraft \
+    EULA=true \
+    SERVER_PORT=25565
 
-# Install necessary dependencies
+USER root
+
 RUN apt-get update && apt-get install -y \
+    bash \
+    coreutils \
+    tar \
+    unzip \
+    gosu \
     git \
     openjdk-21-jre-headless \
     wget \
@@ -15,54 +25,33 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Add a non-root user to run the Minecraft server
-RUN useradd -r -m -U -d /opt/minecraft -s /bin/bash minecraft
-#RUN groupadd -g $HOST_GID minecraft && useradd -u $HOST_UID -g minecraft -s /bin/bash minecraft
+RUN groupadd -g ${MC_GID} ${MC_GROUP} && \
+    useradd -u ${MC_UID} -g ${MC_GID} -m ${MC_USER}
 
-# Switch to the non-root user
-USER minecraft
-# Set environment variables
-ENV EULA=true \
-    SERVER_PORT=25565
+WORKDIR /server
 
-# Setup directories
-RUN mkdir -p /opt/minecraft/backups /opt/minecraft/tools /opt/minecraft/server
+RUN mkdir -p \
+    world \
+    world_nether \
+    world_the_end \
+    config \
+    tools \
+    backups \
+    runtime
 
-# Install and setup mcrcon
-RUN git clone https://github.com/Tiiffi/mcrcon.git /opt/minecraft/tools
+RUN git clone https://github.com/Tiiffi/mcrcon.git /server/tools
 
-# Set the working directory
-WORKDIR /opt/minecraft/tools
+WORKDIR /server/tools
 RUN gcc -std=gnu11 -pedantic -Wall -Wextra -O2 -s -o mcrcon mcrcon.c
 
-# Expose the Minecraft server port
+WORKDIR /server
+
 EXPOSE ${SERVER_PORT}
 
-WORKDIR /opt/minecraft/server
-# Download and prepare Minecraft server
-#RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/95495a7f485eedd84ce928cef5e223b757d2f764/server.jar
+COPY server.jar /server/server.jar
+COPY config/ /server/config/
+COPY entrypoint.sh /entrypoint.sh
 
-# Copy start script to container
-COPY ./config/start.sh /opt/minecraft/server/start.sh
-COPY ./config/server.properties.template /opt/minecraft/server/server.properties.template
+RUN chmod +x /entrypoint.sh
 
-# Switch to root to mame the start.sh executable 
-USER root
-
-# Ensure we're working in the correct directory before chmod/chown
-WORKDIR /opt/minecraft/server
-
-RUN chmod +x /opt/minecraft/server/start.sh
-RUN chown minecraft:minecraft start.sh
-RUN chown minecraft:minecraft server.properties.template
-RUN chown -R minecraft:minecraft .
-
-USER minecraft
-
-# Automatically accept the EULA
-RUN echo "eula=${EULA}" > /opt/minecraft/server/eula.txt
-
-# Set the default command to run the Minecraft server
-WORKDIR /opt/minecraft/server
-
-CMD ["./start.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

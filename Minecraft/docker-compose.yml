@@ -1,32 +1,47 @@
 services:
   minecraft:
-    image: mjanders6/minecraft:latest # cant be a local image
-    # Comment out when using swarm
-    # container_name: minecraft
+    image: mjanders6/minecraft:latest
+    container_name: minecraft
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/127.0.0.1/25565"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
     environment:
-      - EULA=TRUE
-      - PUID=1000
-      - PGID=1000
-      - RCON_PASSWORD=${RCON_PASSWORD}
-      - GAME_MODE=${GAME_MODE}
-      - SERVER_IP=${SERVER_IP}
+      MC_UID: 1000
+      MC_GID: 1000
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      GAME_MODE: ${GAME_MODE}
+      SERVER_IP: ${SERVER_IP}
+
+    volumes:
+      - world_data:/server/world
+      - world_nether_data:/server/world_nether
+      - world_the_end_data:/server/world_the_end
+      - config_data:/server/config
+      - tools_data:/server/tools
+      - backups_data:/server/backups
+      - server_root_data:/server/runtime
+
     ports:
       - "25565:25565"
-    user: "minecraft:minecraft"
-    volumes:
-      - minecraft_server:/opt/minecraft
-      - ./server.jar:/opt/minecraft/server/server.jar:ro
-    #deploy:
-    #  placement:
-    #     constraints:
-           # Replace with your node's hostname
-    #        - "node.hostname == rpi1-server"  
-    #  resources:
-    #     limits:
-    #       memory: 3G
-    # Comment out when using swarm
-    #restart: unless-stopped
+
 volumes:
-  minecraft_server:
-    # When using swarm with docker compose. If not, comment out 
-     external: true
+  world_data:
+    external: true
+  world_nether_data:
+    external: true
+  world_the_end_data:
+    external: true
+  config_data:
+    external: true
+  tools_data:
+    external: true
+  backups_data:
+    external: true
+  server_root_data:
+    external: true
