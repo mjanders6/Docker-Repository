@@ -3,7 +3,7 @@ IMAGE_TAG=latest
 CONTAINER_NAME=minecraft
 BACKUP_DATE=$(shell date +%Y-%m-%d_%H-%M-%S)
 
-VOLUMES = world_data world_nether_data world_the_end_data config_data tools_data backups_data server_root_data
+VOLUMES = world_data world_nether_data world_the_end_data config_data tools_data backups_data server_root_data mods_data
 
 # -------------------------------------------------------
 # Initialize Docker volumes

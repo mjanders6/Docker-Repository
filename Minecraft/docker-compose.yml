@@ -26,6 +26,7 @@ services:
       - tools_data:/server/tools
       - backups_data:/server/backups
       - server_root_data:/server/runtime
+      - mods_data:/server/mods
 
     ports:
       - "25565:25565"
@@ -44,4 +45,6 @@ volumes:
   backups_data:
     external: true
   server_root_data:
+    external: true
+  mods_data:
     external: true
