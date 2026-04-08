@@ -6,7 +6,9 @@ ENV MC_UID=1000 \
     MC_USER=minecraft \
     MC_GROUP=minecraft \
     EULA=true \
-    SERVER_PORT=25565
+    SERVER_PORT=25565 \
+    MC_VERSION=26.1.1 \
+    FORGE_VERSION=63.0.1
 
 USER root
 
@@ -17,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     gosu \
     git \
-    openjdk-21-jre-headless \
+    openjdk-25-jre-headless \
     wget \
     curl \
     gcc \
@@ -37,7 +39,8 @@ RUN mkdir -p \
     config \
     tools \
     backups \
-    runtime
+    runtime \
+    mods
 
 RUN git clone https://github.com/Tiiffi/mcrcon.git /server/tools
 
@@ -48,7 +51,14 @@ WORKDIR /server
 
 EXPOSE ${SERVER_PORT}
 
-COPY server.jar /server/server.jar
+# Download Forge installer
+RUN wget -O forge-installer.jar \
+    https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar
+
+# Install Forge server
+RUN java -jar forge-installer.jar --installServer && \
+    rm forge-installer.jar
+
 COPY config/ /server/config/
 COPY entrypoint.sh /entrypoint.sh
 
