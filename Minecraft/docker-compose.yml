@@ -1,6 +1,6 @@
 services:
   minecraft:
-    image: mjanders6/minecraft:latest
+    image: mjanders6/minecraft:mod
     container_name: minecraft
     restart: unless-stopped
 
@@ -19,32 +19,15 @@ services:
       SERVER_IP: ${SERVER_IP}
 
     volumes:
-      - world_data:/server/world
-      - world_nether_data:/server/world_nether
-      - world_the_end_data:/server/world_the_end
-      - config_data:/server/config
-      - tools_data:/server/tools
       - backups_data:/server/backups
-      - server_root_data:/server/runtime
-      - mods_data:/server/mods
+      - minecraft_mod:/server
 
     ports:
       - "25565:25565"
+      - "24454:24454/udp"
 
 volumes:
-  world_data:
-    external: true
-  world_nether_data:
-    external: true
-  world_the_end_data:
-    external: true
-  config_data:
-    external: true
-  tools_data:
-    external: true
   backups_data:
     external: true
-  server_root_data:
-    external: true
-  mods_data:
+  minecraft_mod:
     external: true
