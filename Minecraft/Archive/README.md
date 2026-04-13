@@ -1,16 +1,32 @@
-# Minecraft
-## Link to initial project for hard python installer: [Minecraft-Installer](https://github.com/mjanders6/Minecraft-Installer)
+# Minecraft Server: Java Edition  
 
-## Docker Image
-This is the Docker image I created to run on my Raspberry Pi 4/5 is hosted at [mjanders6/minecraft](https://hub.docker.com/repository/docker/mjanders6/minecraft/general). The Dockerfile is included in the Minecraft repository if a custom image is needed. 
+# Build Instructions 
+1. Create a .env file using the variables in the [Environment Variables](#environment-variables)
+2. Set the [Variables](#makefile-variables) in the Makefile 
+3. Run: $make build$
+   - This will initialize the volumes if not already created
+4. Run: $make start$
+
+## Tutorial: Setting up a Java Edition Server
+[Tutorial Link](https://minecraft.wiki/w/Tutorial:Setting_up_a_Java_Edition_server)
 
 ## Environment Variables
 - GAME_MODE=creative
 - SERVER_IP=
 - RCON_PASSWORD=up-to-you
 
+## Makefile Variables
+IMAGE_NAME=docker-hub-username/repository-name
+IMAGE_TAG=tag
+CONTAINER_NAME=minecraft
+
+## Historical Projects
+- [None MOD Minecraft](https://github.com/mjanders6/Docker-Repository/tree/main/Minecraft/Archive)
+- [Python Minecraft Installer](https://github.com/mjanders6/Minecraft-Installer) - Please note that this is no longer being maintained. 
+- [Docker Images](https://hub.docker.com/u/mjanders6)
+
 ## Minecraft Jar Files: 
-Get the server link at: [Java Edition server](https://www.minecraft.net/en-us/download/server)
+Get the server link at: [Java Edition Server Download](https://www.minecraft.net/en-us/download/server)
 
 Current link to Minecraft Java jar file:
 - [1.21.5](https://piston-data.mojang.com/v1/objects/e6ec2f64e6080b9b5d9b471b291c33cc7f509733/server.jar)

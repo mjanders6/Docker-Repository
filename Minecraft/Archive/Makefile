@@ -1,5 +1,5 @@
-IMAGE_NAME=mjanders6/minecraft
-IMAGE_TAG=latest
+IMAGE_NAME=<docker-hub-username>/<repository-name>
+IMAGE_TAG=<tag>
 CONTAINER_NAME=minecraft
 BACKUP_DATE=$(shell date +%Y-%m-%d_%H-%M-%S)
 
@@ -30,7 +30,7 @@ help:
 	@echo "  make init-volumes"
 	@echo "  make build"
 	@echo "  make backup"
-	@echo "  make restore FILE=mc-backup-2026-04-12_10-30-00.tar.gz"
+	@echo "  make restore FILE=mc-backup-YYYY-MM-DD_HH-MM-SS.tar.gz"
 	@echo "  make start"
 	@echo "  make stop"
 	@echo "  make update"
@@ -66,8 +66,8 @@ backup: ## Create a timestamped backup of the minecraft_server volume
 		-v minecraft_server_backups:/opt/minecraft/backups \
 		-v minecraft_server:/opt/minecraft/server:ro \
 		alpine sh -c "\
-			cd / && \
-			tar czf /backups/mc-backup-$(BACKUP_DATE).tar.gz server \
+			cd /opt/minecraft && \
+			tar czf /opt/minecraft/backups/mc-backup-$(BACKUP_DATE).tar.gz server \
 		"
 	@echo "✔ Backup created: mc-backup-$(BACKUP_DATE).tar.gz"
 
@@ -80,13 +80,13 @@ restore: ## Restore world data from a backup (requires FILE variable)
 ifndef FILE
 	$(error Must provide FILE=mc-backup-file.tar.gz)
 endif
-	@echo "♻ Restoring selected worlds from $(FILE) into minecraft_mod..."
+	@echo "♻ Restoring selected worlds from $(FILE) into minecraft_server..."
 	docker run --rm \
-		-v backups_data:/backups \
-		-v minecraft_mod:/server \
+		-v minecraft_server_backups:/opt/minecraft/backups \
+		-v minecraft_server:/opt/minecraft/server \
 		alpine sh -c "\
-			cd /server && \
-			tar xzf /backups/$(FILE) --strip-components=1 \
+			tar xzf /opt/minecraft/backups/$(FILE) -C /opt/minecraft/server \
+				--strip-components=1 \
 				server/world \
 				server/world_nether \
 				server/world_the_end \

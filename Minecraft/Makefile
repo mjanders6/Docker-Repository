@@ -1,5 +1,5 @@
-IMAGE_NAME=mjanders6/minecraft
-IMAGE_TAG=mod
+IMAGE_NAME=<docker-hub-username>/<repository-name>
+IMAGE_TAG=<tag>
 CONTAINER_NAME=minecraft
 BACKUP_DATE=$(shell date +%Y-%m-%d_%H-%M-%S)
 
@@ -30,7 +30,7 @@ help:
 	@echo "  make init-volumes"
 	@echo "  make build"
 	@echo "  make backup"
-	@echo "  make restore FILE=mc-backup-2026-04-12_10-30-00.tar.gz"
+	@echo "  make restore FILE=mc-backup-YYYY-MM-DD_HH-MM-SS.tar.gz"
 	@echo "  make start"
 	@echo "  make stop"
 	@echo "  make update"
