@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
     git \
-    openjdk-21-jre-headless \
+    openjdk-25-jre-headless \
     wget \
     curl \
     gcc \
@@ -40,7 +40,7 @@ EXPOSE ${SERVER_PORT}
 
 WORKDIR /opt/minecraft/server
 # Download and prepare Minecraft server
-#RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/95495a7f485eedd84ce928cef5e223b757d2f764/server.jar
+RUN wget -O server.jar https://piston-data.mojang.com/v1/objects/97ccd4c0ed3f81bbb7bfacddd1090b0c56f9bc51/server.jar
 
 # Copy start script to container
 COPY ./config/start.sh /opt/minecraft/server/start.sh

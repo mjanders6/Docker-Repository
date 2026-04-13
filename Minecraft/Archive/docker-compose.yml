@@ -1,8 +1,6 @@
 services:
   minecraft:
     image: mjanders6/minecraft:latest # cant be a local image
-    # Comment out when using swarm
-    # container_name: minecraft
     environment:
       - EULA=TRUE
       - PUID=1000
@@ -15,18 +13,7 @@ services:
     user: "minecraft:minecraft"
     volumes:
       - minecraft_server:/opt/minecraft
-      - ./server.jar:/opt/minecraft/server/server.jar:ro
-    #deploy:
-    #  placement:
-    #     constraints:
-           # Replace with your node's hostname
-    #        - "node.hostname == rpi1-server"  
-    #  resources:
-    #     limits:
-    #       memory: 3G
-    # Comment out when using swarm
-    #restart: unless-stopped
+      #- ./server.jar:/opt/minecraft/server/server.jar:ro # Not needed if generating the downloading the JAR file from the website. 
 volumes:
   minecraft_server:
-    # When using swarm with docker compose. If not, comment out 
-     external: true
+    external: true

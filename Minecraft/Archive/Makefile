@@ -1,9 +1,9 @@
 IMAGE_NAME=mjanders6/minecraft
-IMAGE_TAG=mod
+IMAGE_TAG=latest
 CONTAINER_NAME=minecraft
 BACKUP_DATE=$(shell date +%Y-%m-%d_%H-%M-%S)
 
-VOLUMES = minecraft_mod backups_data
+VOLUMES = minecraft_server minecraft_server_backups
 
 # -------------------------------------------------------
 # Help - Display available make commands
@@ -58,13 +58,13 @@ build: init-volumes ## Build and push the Docker image
 	@echo "✔ Image built and pushed: $(IMAGE_NAME):$(IMAGE_TAG)"
 
 # -------------------------------------------------------
-# Backup minecraft_mod volume (stored inside backups_data)
+# Backup minecraft_server volume (stored inside minecraft_server_backups)
 # -------------------------------------------------------
-backup: ## Create a timestamped backup of the minecraft_mod volume
-	@echo "📦 Creating backup of minecraft_mod volume..."
+backup: ## Create a timestamped backup of the minecraft_server volume
+	@echo "📦 Creating backup of minecraft_server volume..."
 	docker run --rm \
-		-v backups_data:/backups \
-		-v minecraft_mod:/server:ro \
+		-v minecraft_server_backups:/opt/minecraft/backups \
+		-v minecraft_server:/opt/minecraft/server:ro \
 		alpine sh -c "\
 			cd / && \
 			tar czf /backups/mc-backup-$(BACKUP_DATE).tar.gz server \
