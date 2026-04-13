@@ -3,9 +3,9 @@
 # Build Instructions 
 1. Create a .env file using the variables in the [Environment Variables](#environment-variables)
 2. Set the [Variables](#makefile-variables) in the Makefile 
-3. Run: $make build$
+3. Run: `make build`
    - This will initialize the volumes if not already created
-4. Run: $make start$
+4. Run: `make start`
 
 ## Tutorial: Setting up a Java Edition Server
 [Tutorial Link](https://minecraft.wiki/w/Tutorial:Setting_up_a_Java_Edition_server)
