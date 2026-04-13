@@ -11,7 +11,7 @@
 [Tutorial Link](https://minecraft.wiki/w/Tutorial:Setting_up_a_Java_Edition_server)
 
 ## MOD | Minecraft Forge
-[Minecraft Forge Installer](https://files.minecraftforge.net/net/minecraftforge/forge/)
+This build uses [Minecraft Forge Installer](https://files.minecraftforge.net/net/minecraftforge/forge/) and it works very well.
 
 ## Environment Variables
 - GAME_MODE=creative
