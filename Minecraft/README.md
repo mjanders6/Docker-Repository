@@ -19,9 +19,9 @@
 - RCON_PASSWORD=up-to-you
 
 ## Makefile Variables
-IMAGE_NAME=docker-hub-username/repository-name
-IMAGE_TAG=tag
-CONTAINER_NAME=minecraft
+- IMAGE_NAME=docker-hub-username/repository-name
+- IMAGE_TAG=tag
+- CONTAINER_NAME=minecraft
 
 ## Historical Projects
 - [None MOD Minecraft](https://github.com/mjanders6/Docker-Repository/tree/main/Minecraft/Archive)

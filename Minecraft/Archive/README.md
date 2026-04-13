@@ -16,9 +16,9 @@
 - RCON_PASSWORD=up-to-you
 
 ## Makefile Variables
-IMAGE_NAME=docker-hub-username/repository-name
-IMAGE_TAG=tag
-CONTAINER_NAME=minecraft
+- IMAGE_NAME=docker-hub-username/repository-name
+- IMAGE_TAG=tag
+- CONTAINER_NAME=minecraft
 
 ## Historical Projects
 - [None MOD Minecraft](https://github.com/mjanders6/Docker-Repository/tree/main/Minecraft/Archive)
@@ -35,4 +35,4 @@ Current link to Minecraft Java jar file:
 - [1.21.8](https://piston-data.mojang.com/v1/objects/6bce4ef400e4efaa63a13d5e6f6b500be969ef81/server.jar)
 - [1.21.10](https://piston-data.mojang.com/v1/objects/95495a7f485eedd84ce928cef5e223b757d2f764/server.jar)
 - [1.21.11](https://piston-data.mojang.com/v1/objects/64bb6d763bed0a9f1d632ec347938594144943ed/server.jar)
-- [1.26.1.2](https://piston-data.mojang.com/v1/objects/97ccd4c0ed3f81bbb7bfacddd1090b0c56f9bc51/server.jar)
+- [26.1.2](https://piston-data.mojang.com/v1/objects/97ccd4c0ed3f81bbb7bfacddd1090b0c56f9bc51/server.jar)
