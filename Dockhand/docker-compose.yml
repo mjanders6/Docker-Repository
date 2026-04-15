@@ -21,6 +21,7 @@ services:
       DOCKHAND_AGENT_TOKEN_FILE: /run/secrets/dockhand_agent_token
     volumes:
       - dockhand_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     secrets:
       - dockhand_agent_token
     deploy:
