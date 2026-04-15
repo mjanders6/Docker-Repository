@@ -45,6 +45,8 @@ services:
 
   hawser-agent:
     image: ghcr.io/finsys/hawser:latest
+    ports:
+      - "2376:2376" 
     networks:
       - dockhand_net
     environment:
