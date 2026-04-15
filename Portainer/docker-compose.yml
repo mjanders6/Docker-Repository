@@ -1,0 +1,44 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    command: -H tcp://tasks.portainer_agent --tlsskipverify
+    ports:
+      - "8000:8000"
+      - "9443:9443"
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - portainer-net
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+
+  portainer_agent:
+    image: portainer/agent:latest
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.portainer_agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host
+    deploy:
+      mode: global
+    networks:
+      - portainer-net
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+
+volumes:
+  portainer_data:
+
+networks:
+  portainer-net:
+    driver: overlay

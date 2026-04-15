@@ -1,0 +1,14 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"     # Portainer web UI
+      - "9443:9443"     # Optional: HTTPS UI
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker socket for managing containers
+      - portainer_data:/data                      # Persistent data volume
+
+volumes:
+  portainer_data:
