@@ -43,7 +43,7 @@ services:
           memory: 256M
 
   hawser-agent:
-    image: fnsys/hawser:latest
+    image: ghcr.io/finsys/hawser:latest
     networks:
       - dockhand_net
     environment:
