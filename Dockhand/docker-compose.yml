@@ -51,7 +51,7 @@ services:
       AGENT_MODE: swarm
       NODE_ID: "{{.Node.ID}}"
       NODE_HOSTNAME: "{{.Node.Hostname}}"
-      NODE_IP: "{{.Node.Address}}"
+      #NODE_IP: "{{.Node.Address}}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     secrets:
