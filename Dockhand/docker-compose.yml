@@ -1,19 +1,31 @@
-version: '3.9'
-
-# Docker Swarm stack for Dockhand and Hawser Agents
-# Deploy using: docker stack deploy -c docker-compose.yml dockhand
+version: "3.9"
 
 services:
   dockhand:
-    image: ghcr.io/dockhand/dockhand:latest
+    image: fnsys/dockhand:latest
     ports:
-      - "8080:8080"
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: ingress
+      - target: 9443
+        published: 9443
+        protocol: tcp
+        mode: ingress
     networks:
       - dockhand_net
     environment:
-      - LOG_LEVEL=info
+      LOG_LEVEL: info
+      DOCKHAND_ENVIRONMENTS: swarm
+      DOCKHAND_ENV_swarm_NAME: "Docker Swarm Cluster"
+      DOCKHAND_ENV_swarm_DESCRIPTION: "Environment for all Hawser agents running in the Docker Swarm"
+      DOCKHAND_ENV_swarm_DISCOVERY: "hawser"
+      DOCKHAND_ENV_swarm_DEFAULT: "true"
+      DOCKHAND_AGENT_TOKEN_FILE: /run/secrets/dockhand_agent_token
     volumes:
       - dockhand_data:/data
+    secrets:
+      - dockhand_agent_token
     deploy:
       mode: replicated
       replicas: 1
@@ -22,40 +34,26 @@ services:
           - node.role == manager
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 1
-        delay: 10s
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 512M
-        reservations:
-          cpus: "0.25"
-          memory: 256M
 
   hawser-agent:
-    image: ghcr.io/dockhand/hawser:latest
+    image: fnsys/hawser:latest
     networks:
       - dockhand_net
     environment:
-      - DOCKHAND_SERVER=http://dockhand:8080
-      - AGENT_MODE=swarm
+      DOCKHAND_SERVER: https://dockhand:9443
+      DOCKHAND_ENVIRONMENT: swarm
+      DOCKHAND_AGENT_TOKEN_FILE: /run/secrets/dockhand_agent_token
+      AGENT_MODE: swarm
+      NODE_ID: "{{.Node.ID}}"
+      NODE_HOSTNAME: "{{.Node.Hostname}}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    secrets:
+      - dockhand_agent_token
     deploy:
       mode: global
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 1
-        delay: 10s
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 256M
-        reservations:
-          cpus: "0.10"
-          memory: 128M
 
 networks:
   dockhand_net:
@@ -65,3 +63,7 @@ networks:
 volumes:
   dockhand_data:
     driver: local
+
+secrets:
+  dockhand_agent_token:
+    external: true

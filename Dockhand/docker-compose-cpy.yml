@@ -1,0 +1,67 @@
+version: '3.9'
+
+# Docker Swarm stack for Dockhand and Hawser Agents
+# Deploy using: docker stack deploy -c docker-compose.yml dockhand
+
+services:
+  dockhand:
+    image: ghcr.io/dockhand/dockhand:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - dockhand_net
+    environment:
+      - LOG_LEVEL=info
+    volumes:
+      - dockhand_data:/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  hawser-agent:
+    image: ghcr.io/dockhand/hawser:latest
+    networks:
+      - dockhand_net
+    environment:
+      - DOCKHAND_SERVER=http://dockhand:8080
+      - AGENT_MODE=swarm
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 128M
+
+networks:
+  dockhand_net:
+    driver: overlay
+    attachable: true
+
+volumes:
+  dockhand_data:
+    driver: local
