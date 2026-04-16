@@ -19,7 +19,7 @@ services:
       DOCKHAND_ENV_swarm_DEFAULT: "true"
       DOCKHAND_AGENT_TOKEN_FILE: /run/secrets/dockhand_agent_token
     volumes:
-      - dockhand_data:/data
+      - dockhand_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
     secrets:
       - dockhand_agent_token
