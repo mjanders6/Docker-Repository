@@ -71,7 +71,7 @@ networks:
 
 volumes:
   dockhand_data:
-    driver: local
+    external: true #driver: local
 
 secrets:
   dockhand_agent_token:

@@ -1,23 +1,22 @@
-# Docker Swarm stack for Dockhand and Hawser Agents
-# Deploy using:
-#   docker stack deploy -c docker-compose.yml dockhand
+version: "3.9"
 
 services:
   dockhand:
     image: fnsys/dockhand:latest
     ports:
-      - "3000:3000" #"8080:8080"
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
     networks:
       - dockhand_net
     environment:
       LOG_LEVEL: info
-      # Define the environment for Hawser agents
       DOCKHAND_ENVIRONMENTS: swarm
       DOCKHAND_ENV_swarm_NAME: "Docker Swarm Cluster"
       DOCKHAND_ENV_swarm_DESCRIPTION: "Environment for all Hawser agents running in the Docker Swarm"
       DOCKHAND_ENV_swarm_DISCOVERY: "hawser"
       DOCKHAND_ENV_swarm_DEFAULT: "true"
-      # Read agent token from Docker secret
       DOCKHAND_AGENT_TOKEN_FILE: /run/secrets/dockhand_agent_token
     volumes:
       - dockhand_data:/data
@@ -30,23 +29,12 @@ services:
       placement:
         constraints:
           - node.role == manager
+          - node.labels.dockhand == true
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 1
-        delay: 10s
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 512M
-        reservations:
-          cpus: "0.25"
-          memory: 256M
 
   hawser-agent:
     image: ghcr.io/finsys/hawser:latest
-    ports:
-      - "2376:2376" 
     networks:
       - dockhand_net
     environment:
@@ -56,6 +44,7 @@ services:
       AGENT_MODE: swarm
       NODE_ID: "{{.Node.ID}}"
       NODE_HOSTNAME: "{{.Node.Hostname}}"
+      NODE_IP: "{{.Node.Address}}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     secrets:
@@ -64,16 +53,6 @@ services:
       mode: global
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 1
-        delay: 10s
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 256M
-        reservations:
-          cpus: "0.10"
-          memory: 128M
 
 networks:
   dockhand_net:
@@ -83,6 +62,10 @@ networks:
 volumes:
   dockhand_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/dockhand/data
 
 secrets:
   dockhand_agent_token:
