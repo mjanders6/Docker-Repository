@@ -19,7 +19,7 @@ services:
       # Set a password to access the web interface. Not setting one will result in a random password being assigned
       FTLCONF_webserver_api_password: 'correct horse battery staple'
       # If using Docker's default `bridge` network setting the dns listening mode should be set to 'all'
-      FTLCONF_dns_listeningMode: 'all'
+      # FTLCONF_dns_listeningMode: 'all'
       PIHOLE_DNS_: '1.1.1.1;8.8.8.8'
     dns:
       - 1.1.1.1
