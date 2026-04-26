@@ -6,6 +6,7 @@ services:
     command: -H tcp://tasks.portainer_agent:9001 --tlsskipverify
     ports:
       - "8000:8000"
+      - "9000:9000"
       - "9443:9443"
     volumes:
       - portainer_data:/data
@@ -23,7 +24,7 @@ services:
     secrets:
       - agent_secret
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:9443/api/system/status", "-k"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
       interval: 30s
       timeout: 10s
       retries: 3
