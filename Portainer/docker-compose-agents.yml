@@ -1,0 +1,30 @@
+services:
+  portainer_agent:
+    image: portainer/agent:latest
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.portainer_agent
+      AGENT_PORT: 9001
+      AGENT_SECRET_FILE: /run/secrets/agent_secret
+    ports:
+      - "9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host
+    deploy:
+      mode: global
+      update_config:
+        parallelism: 1
+        delay: 10s
+    networks:
+      - portainer-net
+    secrets:
+      - agent_secret
+
+networks:
+  portainer-net:
+    driver: overlay
+
+secrets:
+  agent_secret:
+    external: true
