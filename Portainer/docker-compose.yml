@@ -23,12 +23,6 @@ services:
       - AGENT_SECRET_FILE=/run/secrets/agent_secret
     secrets:
       - agent_secret
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
   portainer_agent:
     image: portainer/agent:latest
@@ -54,7 +48,7 @@ services:
 
 volumes:
   portainer_data:
-    driver: local
+    external: true
 
 networks:
   portainer-net:
