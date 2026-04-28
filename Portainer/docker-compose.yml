@@ -21,8 +21,10 @@ services:
       - portainer-net
     environment:
       - AGENT_SECRET_FILE=/run/secrets/agent_secret
+      - ADMIN_PASSWORD_FILE=/run/secrets/admin_password
     secrets:
       - agent_secret
+      - admin_password
 
   portainer_agent:
     image: portainer/agent:latest
@@ -53,9 +55,9 @@ volumes:
 networks:
   portainer-net:
     driver: overlay
-    driver_opts:
-      com.docker.network.driver.overlay.vxlanid: 4096
 
 secrets:
   agent_secret:
+    external: true
+  admin_password:
     external: true
