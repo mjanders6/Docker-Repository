@@ -24,4 +24,4 @@ volumes:
 
 networks:
   portainer-net:
-    driver: bridge
+    driver: overlay
