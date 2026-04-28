@@ -1,4 +1,4 @@
-.PHONY: help install check swarm-init swarm-join-worker swarm-join-manager
+.PHONY: help install check swarm-init swarm-join-worker swarm-join-manager docker-remove docker-reinstall docker-clean swarm-leave portainer-setup portainer-deploy portainer-remove full-setup
 
 SHELL := /bin/bash
 .ONESHELL:
@@ -9,7 +9,7 @@ help: ## Show this help message
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Available targets:"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-22s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-25s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 ## install: Install Docker with error handling
 install: ## Install Docker with error handling
@@ -110,3 +110,91 @@ swarm-join-manager: ## Join an existing swarm as manager (requires TOKEN and MAN
 	fi
 
 	@echo "✅ Joined swarm as manager"
+
+## docker-remove: Remove Docker completely (including Swarm)
+docker-remove: ## Remove Docker completely (including Swarm)
+	@echo "⚠️  WARNING: This will remove Docker, Swarm, and ALL containers/volumes!"
+	@echo "Press Ctrl+C to cancel, or wait 5 seconds..."
+	@sleep 5
+	@echo "Leaving Docker Swarm..."
+	docker swarm leave --force 2>/dev/null || echo "Not in a Swarm or already left"
+	@echo "Removing all stacks..."
+	docker stack rm $$(docker stack ls -q) 2>/dev/null || echo "No stacks to remove"
+	@sleep 5
+	@echo "Stopping all containers..."
+	sudo docker ps -aq | xargs -r sudo docker stop
+	@echo "Removing all containers..."
+	sudo docker ps -aq | xargs -r sudo docker rm
+	@echo "Removing volumes..."
+	sudo docker volume prune -f
+	@echo "Removing networks..."
+	sudo docker network prune -f
+	@echo "Removing Docker packages..."
+	sudo apt-get remove -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	sudo apt-get purge -y docker-ce docker-ce-cli containerd.io
+	sudo apt-get autoremove -y
+	@echo "Removing Docker data directories..."
+	sudo rm -rf /var/lib/docker
+	sudo rm -rf /var/lib/containerd
+	sudo rm -rf /etc/docker
+	@echo "✅ Docker and Swarm removed successfully"
+
+## docker-reinstall: Remove and reinstall Docker cleanly
+docker-reinstall: docker-remove install ## Remove and reinstall Docker cleanly
+	@echo "✅ Docker has been cleanly reinstalled!"
+
+## docker-clean: Clean up stopped containers and dangling images
+docker-clean: ## Clean up stopped containers and dangling images
+	@echo "🧹 Cleaning up Docker..."
+	docker container prune -f
+	docker image prune -f
+	@echo "✅ Docker cleanup complete"
+
+## swarm-leave: Leave Docker Swarm
+swarm-leave: ## Leave Docker Swarm
+	@echo "⚠️  WARNING: This will leave the Swarm!"
+	@echo "Press Ctrl+C to cancel, or wait 3 seconds..."
+	@sleep 3
+	docker swarm leave --force
+	@echo "✅ Left Swarm"
+
+## portainer-setup: Create Portainer secrets and volumes
+portainer-setup: ## Create Portainer secrets and volumes
+	@echo "📦 Setting up Portainer resources..."
+	docker volume create portainer_data
+	openssl rand -base64 32 | docker secret create agent_secret - 2>/dev/null || echo "ℹ️  Secret already exists"
+	@echo "✅ Portainer resources created"
+
+## portainer-deploy: Deploy Portainer as Swarm service
+portainer-deploy: portainer-setup ## Deploy Portainer as Swarm service
+	@echo "🚀 Deploying Portainer as Swarm service..."
+	docker stack deploy -c portainer-swarm-server.yml portainer
+	@sleep 10
+	@echo ""
+	@echo "✅ Portainer deployed!"
+	@IP=$$(hostname -I | awk '{print $$1}'); \
+	echo "🌐 Access Portainer at: http://$$IP:9000"; \
+	echo ""; \
+	docker service ps portainer_portainer
+
+## portainer-remove: Remove Portainer stack and resources
+portainer-remove: ## Remove Portainer stack and resources
+	@echo "🗑️  Removing Portainer..."
+	docker stack rm portainer
+	docker volume rm portainer_data 2>/dev/null || echo "ℹ️  Volume already removed"
+	docker secret rm agent_secret 2>/dev/null || echo "ℹ️  Secret already removed"
+	@echo "✅ Portainer removed"
+
+## full-setup: Complete setup (Docker + Swarm + Portainer)
+full-setup: docker-reinstall swarm-init portainer-deploy ## Complete setup (Docker + Swarm + Portainer)
+	@echo ""
+	@echo "========================================="
+	@echo "✅ FULL SETUP COMPLETE!"
+	@echo "========================================="
+	@echo "✓ Docker: Installed"
+	@echo "✓ Swarm: Initialized"
+	@echo "✓ Portainer: Deployed"
+	@echo ""
+	@IP=$$(hostname -I | awk '{print $$1}'); \
+	echo "🌐 Access Portainer at: http://$$IP:9000"; \
+	echo "Complete setup wizard in the browser"
