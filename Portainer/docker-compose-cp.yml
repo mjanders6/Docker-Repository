@@ -5,7 +5,7 @@ services:
     ports:
       - "9000:9000"
       - "9443:9443"
-      - "8000:8000"
+      #- "8000:8000"
     volumes:
       - portainer_data:/data
     # REMOVED: /var/run/docker.sock (Server doesn't need it when using Agent)
@@ -17,19 +17,19 @@ services:
           - node.role == manager
     networks:
       - portainer-net
-    environment:
-      - AGENT_SECRET_FILE=/run/secrets/agent_secret
-      - ADMIN_PASSWORD_FILE=/run/secrets/admin_password
-    secrets:
-      - agent_secret
-      - admin_password
+    #environment:
+      #- AGENT_SECRET_FILE=/run/secrets/agent_secret
+      #- ADMIN_PASSWORD_FILE=/run/secrets/admin_password
+    #secrets:
+      #- agent_secret
+      %- admin_password
 
   portainer_agent:
     image: portainer/agent:latest
     environment:
       AGENT_CLUSTER_ADDR: tasks.portainer_agent
       AGENT_PORT: 9001
-      AGENT_SECRET_FILE: /run/secrets/agent_secret
+      #AGENT_SECRET_FILE: /run/secrets/agent_secret
     # REMOVED: ports 9001 (Internal overlay handles this)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -39,19 +39,19 @@ services:
       mode: global
     networks:
       - portainer-net
-    secrets:
-      - agent_secret
+    #secrets:
+    #  - agent_secret
 
 volumes:
   portainer_data:
-    external: true
+    name: portainer_data #external: true
 
 networks:
   portainer-net:
     driver: overlay
 
-secrets:
-  agent_secret:
-    external: true
-  admin_password:
-    external: true
+#secrets:
+#  agent_secret:
+#    external: true
+#  admin_password:
+#    external: true
