@@ -22,7 +22,7 @@ services:
       #- ADMIN_PASSWORD_FILE=/run/secrets/admin_password
     #secrets:
       #- agent_secret
-      %- admin_password
+      #- admin_password
 
   portainer_agent:
     image: portainer/agent:latest
