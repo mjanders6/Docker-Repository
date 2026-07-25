@@ -4,6 +4,7 @@ set -e
 # Fix ownership and permissions
 echo "🔧 Fixing permissions..."
 find /server -exec chown "${MC_UID}:${MC_GID}" {} + 2>/dev/null || true
+chmod +x /server/run.sh 2>/dev/null || true
 
 # Drop privileges and run as MC user
 echo "🔧 Dropping to MC user (${MC_UID}:${MC_GID})..."
@@ -42,5 +43,8 @@ echo "eula=true" > eula.txt
 # 4. Start Minecraft
 # -------------------------------
 echo "🚀 Starting Minecraft server..."
-exec java -Xmx4096M -Xms2048M -jar server.jar nogui
+# exec java -Xmx4096M -Xms2048M -jar server.jar nogui
+# before step 4, write/update user_jvm_args.txt
+echo "-Xmx4096M -Xms2048M" > user_jvm_args.txt
+exec ./run.sh nogui
 '
