@@ -7,6 +7,13 @@
    - This will initialize the volumes if not already created
 4. Run: `make start`
 
+## Quick Container Check
+Confirm run.sh actually lands in /server. After building, run:
+```bash
+docker run --rm your-image ls -la /server
+```
+You should see `run.sh`, `libraries/`, and a `user_jvm_args.txt` (or it'll be created by your entrypoint). If Forge changed its installer output format for `MC 26.2` specifically, this confirms it before you're debugging at container-start time.
+
 ## Tutorial: Setting up a Java Edition Server
 [Tutorial Link](https://minecraft.wiki/w/Tutorial:Setting_up_a_Java_Edition_server)
 
