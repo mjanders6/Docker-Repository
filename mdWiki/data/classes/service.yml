@@ -1,0 +1,19 @@
+name: service
+label: Homelab Service
+icon: "🖥️"
+fields:
+  - name: host
+    label: Host / Container
+    default: ""
+  - name: port
+    label: Port
+    default: ""
+  - name: status
+    label: Status
+    default: "running"
+template: |
+  ## Purpose
+
+  ## Configuration
+
+  ## Notes

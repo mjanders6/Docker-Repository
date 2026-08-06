@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Editing {{ note.metadata.title }}{% endblock %}
+{% block content %}
+<form class="edit-form" method="post" action="/note/{{ note.slug }}/save">
+  <div class="edit-toprow">
+    <input type="text" name="title" value="{{ note.metadata.title or '' }}" placeholder="Title" class="title-input">
+    <button class="btn btn-primary" type="submit">Save</button>
+  </div>
+
+  <div class="edit-meta-row">
+    <label>Class
+      <select name="class" id="class-select">
+        <option value="">(none)</option>
+        {% for c in classes %}
+          <option value="{{ c.name }}" {{ 'selected' if c.name == note.metadata.class }}>
+            {{ c.icon or '' }} {{ c.label or c.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Date
+      <input type="date" name="date" value="{{ note.metadata.date or '' }}">
+    </label>
+    <label>Tags (comma separated)
+      <input type="text" name="tags" value="{{ (note.metadata.tags or []) | join(', ') }}">
+    </label>
+  </div>
+
+  <div class="edit-class-fields" id="class-fields-container">
+    {% include "_class_fields.html" %}
+  </div>
+
+  <div class="editor-split">
+    <textarea name="body" id="body-input" class="body-textarea"
+              placeholder="Write markdown here...">{{ note.body }}</textarea>
+    <div id="preview-pane" class="preview-pane"></div>
+  </div>
+</form>
+
+<script>
+  const textarea = document.getElementById('body-input');
+  const preview = document.getElementById('preview-pane');
+  let timer = null;
+
+  async function updatePreview() {
+    const res = await fetch('/preview', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: 'body=' + encodeURIComponent(textarea.value),
+    });
+    preview.innerHTML = await res.text();
+  }
+
+  textarea.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(updatePreview, 300);
+  });
+  updatePreview();
+
+  // Switching the class swaps in that class's extra fields (empty/default
+  // values -- any values entered under the previous class aren't carried
+  // over unless the two classes happen to share a field name).
+  const classSelect = document.getElementById('class-select');
+  const fieldsContainer = document.getElementById('class-fields-container');
+
+  classSelect.addEventListener('change', async () => {
+    const name = classSelect.value;
+    if (!name) {
+      fieldsContainer.innerHTML = '';
+      return;
+    }
+    const res = await fetch(`/classes/${encodeURIComponent(name)}/fields-partial`);
+    fieldsContainer.innerHTML = await res.text();
+  });
+</script>
+{% endblock %}

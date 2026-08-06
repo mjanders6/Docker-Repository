@@ -1,0 +1,17 @@
+name: meeting
+label: Meeting
+icon: "🗓️"
+fields:
+  - name: attendees
+    label: Attendees
+    default: ""
+  - name: project
+    label: Project
+    default: ""
+template: |
+  ## Agenda
+
+  ## Notes
+
+  ## Action Items
+  - [ ]

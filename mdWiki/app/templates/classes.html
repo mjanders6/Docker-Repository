@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Manage Classes{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Classes</h2>
+  <a class="btn btn-primary" href="/classes/new">+ New Class</a>
+</div>
+
+{% if not classes %}
+  <p class="empty">No classes defined yet. <a href="/classes/new">Create one</a>.</p>
+{% endif %}
+
+<div class="class-list">
+  {% for c in classes %}
+    <div class="class-card">
+      <div class="class-card-main">
+        <div class="class-card-title">{{ c.icon or '' }} {{ c.label or c.name }}</div>
+        <div class="class-card-meta">
+          <span class="badge">{{ c.name }}</span>
+          <span class="date">{{ counts.get(c.name, 0) }} note{{ '' if counts.get(c.name, 0) == 1 else 's' }}</span>
+          <span class="date">{{ c.fields | length }} field{{ '' if (c.fields | length) == 1 else 's' }}</span>
+        </div>
+      </div>
+      <div class="class-card-actions">
+        <a class="btn" href="/classes/{{ c.name }}/edit">Edit</a>
+        <form method="post" action="/classes/{{ c.name }}/delete"
+              onsubmit="return confirm('Delete class &quot;{{ c.name }}&quot;?{{ ' It is used by ' ~ counts.get(c.name, 0) ~ ' note(s) \u2014 they will keep their class field but lose their extra fields/template.' if counts.get(c.name, 0) > 0 else '' }}');"
+              style="display:inline">
+          <button class="btn btn-danger" type="submit">Delete</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

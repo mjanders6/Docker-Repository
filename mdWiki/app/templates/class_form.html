@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}{{ 'New Class' if is_new else 'Edit ' ~ cls.name }}{% endblock %}
+{% block content %}
+<form class="class-form" method="post" action="{{ '/classes/new' if is_new else '/classes/' ~ cls.name ~ '/save' }}">
+  <h2>{{ 'New Class' if is_new else 'Edit Class' }}</h2>
+
+  {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+
+  <div class="edit-meta-row">
+    <label>Name (slug, lowercase, no spaces)
+      {% if is_new %}
+        <input type="text" name="name" value="{{ cls.name if cls else '' }}" placeholder="e.g. book" required autofocus>
+      {% else %}
+        <input type="text" value="{{ cls.name }}" readonly>
+      {% endif %}
+    </label>
+    <label>Label
+      <input type="text" name="label" value="{{ cls.label if cls else '' }}" placeholder="e.g. Book">
+    </label>
+    <label>Icon
+      <select id="icon-select">
+        <option value="📝">📝 Note</option>
+        <option value="📓">📓 Notebook</option>
+        <option value="📔">📔 Journal</option>
+        <option value="📚">📚 Book</option>
+        <option value="📖">📖 Reading</option>
+        <option value="🗓️">🗓️ Meeting / Calendar</option>
+        <option value="✅">✅ Task</option>
+        <option value="📌">📌 Reference</option>
+        <option value="🖥️">🖥️ Service / Server</option>
+        <option value="⚙️">⚙️ Config</option>
+        <option value="🔧">🔧 Tool</option>
+        <option value="🏠">🏠 Home</option>
+        <option value="💡">💡 Idea</option>
+        <option value="🎯">🎯 Goal</option>
+        <option value="🍳">🍳 Recipe</option>
+        <option value="🎮">🎮 Game</option>
+        <option value="🎵">🎵 Music</option>
+        <option value="🎨">🎨 Creative</option>
+        <option value="✈️">✈️ Travel</option>
+        <option value="💰">💰 Finance</option>
+        <option value="🏥">🏥 Health</option>
+        <option value="🌙">🌙 Personal</option>
+        <option value="🔬">🔬 Research</option>
+        <option value="📊">📊 Project</option>
+        <option value="⭐">⭐ Favorite</option>
+        <option value="📁">📁 General</option>
+        <option value="__custom__">Other (type your own)…</option>
+      </select>
+      <input type="text" name="icon" id="icon-custom" value="{{ cls.icon if cls else '' }}"
+             placeholder="or type any emoji" maxlength="4" style="margin-top:6px;">
+    </label>
+  </div>
+
+  <div class="fields-section">
+    <div class="fields-header">
+      <h3>Fields</h3>
+      <button type="button" class="btn" id="add-field-btn">+ Add field</button>
+    </div>
+    <div id="fields-container">
+      {% if cls and cls.fields %}
+        {% for field in cls.fields %}
+        <div class="field-row-editable">
+          <input type="text" name="field_name" value="{{ field.name }}" placeholder="field name (e.g. author)">
+          <input type="text" name="field_label" value="{{ field.label }}" placeholder="display label">
+          <input type="text" name="field_default" value="{{ field.default }}" placeholder="default value">
+          <button type="button" class="btn btn-danger remove-field-btn">&times;</button>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <label class="template-label">Starter template (markdown body for new notes of this class)
+    <textarea name="template" class="template-textarea" placeholder="## Summary&#10;&#10;## Notes">{{ cls.template if cls else '' }}</textarea>
+  </label>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn" href="/classes">Cancel</a>
+  </div>
+</form>
+
+<template id="field-row-template">
+  <div class="field-row-editable">
+    <input type="text" name="field_name" placeholder="field name (e.g. author)">
+    <input type="text" name="field_label" placeholder="display label">
+    <input type="text" name="field_default" placeholder="default value">
+    <button type="button" class="btn btn-danger remove-field-btn">&times;</button>
+  </div>
+</template>
+
+<script>
+  const container = document.getElementById('fields-container');
+  const rowTemplate = document.getElementById('field-row-template');
+
+  document.getElementById('add-field-btn').addEventListener('click', () => {
+    const row = rowTemplate.content.cloneNode(true);
+    container.appendChild(row);
+  });
+
+  container.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-field-btn')) {
+      e.target.closest('.field-row-editable').remove();
+    }
+  });
+
+  // Icon dropdown <-> hidden-in-spirit text input. The text input (name="icon")
+  // is the only thing actually submitted; the select is just a convenience
+  // picker that writes into it.
+  const iconSelect = document.getElementById('icon-select');
+  const iconCustom = document.getElementById('icon-custom');
+  const presetValues = Array.from(iconSelect.options)
+    .map(o => o.value)
+    .filter(v => v !== '__custom__');
+
+  function syncIconSelectToCurrentValue() {
+    if (presetValues.includes(iconCustom.value)) {
+      iconSelect.value = iconCustom.value;
+      iconCustom.style.display = 'none';
+    } else {
+      iconSelect.value = '__custom__';
+      iconCustom.style.display = '';
+    }
+  }
+
+  iconSelect.addEventListener('change', () => {
+    if (iconSelect.value === '__custom__') {
+      iconCustom.value = '';
+      iconCustom.style.display = '';
+      iconCustom.focus();
+    } else {
+      iconCustom.value = iconSelect.value;
+      iconCustom.style.display = 'none';
+    }
+  });
+
+  syncIconSelectToCurrentValue();
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+name: note
+label: Note
+icon: "📝"
+fields: []
+template: |
+  Write your notes here.

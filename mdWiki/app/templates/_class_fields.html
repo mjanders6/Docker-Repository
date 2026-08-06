@@ -1,0 +1,8 @@
+{% if cls and cls.fields %}
+  {% for field in cls.fields %}
+    {% set val = (values or {}).get(field.name, field.default or '') %}
+    <label>{{ field.label or field.name }}
+      <input type="text" name="{{ field.name }}" value="{{ val }}">
+    </label>
+  {% endfor %}
+{% endif %}

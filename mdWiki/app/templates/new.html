@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}New Note{% endblock %}
+{% block content %}
+<form class="new-form" method="post" action="/new">
+  <h2>New Note</h2>
+  <label>Title
+    <input type="text" name="title" placeholder="Note title" required autofocus>
+  </label>
+  <label>Class
+    <select name="class">
+      <option value="">(none)</option>
+      {% for c in classes %}
+        <option value="{{ c.name }}" {{ 'selected' if c.name == class_name }}>
+          {{ c.icon or '' }} {{ c.label or c.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+  <button class="btn btn-primary" type="submit">Create</button>
+</form>
+{% endblock %}

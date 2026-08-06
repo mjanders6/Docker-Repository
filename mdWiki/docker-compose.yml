@@ -1,0 +1,14 @@
+services:
+  mdwiki:
+    build: .
+    container_name: mdwiki
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - mdwiki-notes:/data/notes
+      - mdwiki-classes:/data/classes
+
+volumes:
+  mdwiki-notes:
+  mdwiki-classes:

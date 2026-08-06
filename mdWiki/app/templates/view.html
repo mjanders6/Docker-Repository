@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ note.metadata.title }}{% endblock %}
+{% block content %}
+<article class="note-view">
+  <div class="note-header">
+    <h1>{{ note.metadata.title }}</h1>
+    <div class="note-actions">
+      <a class="btn" href="/note/{{ note.slug }}/edit">Edit</a>
+      <form method="post" action="/note/{{ note.slug }}/delete"
+            onsubmit="return confirm('Delete this note?');" style="display:inline">
+        <button class="btn btn-danger" type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="note-meta">
+    {% if note.metadata.class %}<span class="badge">{{ note.metadata.class }}</span>{% endif %}
+    {% if note.metadata.date %}<span class="date">{{ note.metadata.date }}</span>{% endif %}
+    {% for t in (note.metadata.tags or []) %}<span class="tag">#{{ t }}</span>{% endfor %}
+  </div>
+
+  {% if cls %}
+  <div class="note-fields">
+    {% for field in cls.fields %}
+      {% set val = note.metadata.get(field.name) %}
+      {% if val %}
+        <div class="field-row"><strong>{{ field.label or field.name }}:</strong> {{ val }}</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="note-body">
+    {{ html | safe }}
+  </div>
+</article>
+{% endblock %}
