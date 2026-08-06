@@ -11,4 +11,6 @@ services:
 
 volumes:
   mdwiki-notes:
+    external: true
   mdwiki-classes:
+    external: true
