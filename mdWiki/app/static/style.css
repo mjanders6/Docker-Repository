@@ -101,6 +101,18 @@ a:hover { text-decoration: underline; }
 }
 .query-empty { color: var(--text-dim); font-size: 0.9em; margin: 12px 0; font-style: italic; }
 
+/* --- /help page --- */
+.help-page .note-body table:not(.query-table) {
+  width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em;
+}
+.help-page .note-body table:not(.query-table) th,
+.help-page .note-body table:not(.query-table) td {
+  text-align: left; padding: 6px 10px; border: 1px solid var(--border);
+}
+.help-page .note-body table:not(.query-table) th { background: var(--bg-alt); color: var(--text-dim); }
+.help-page .note-body h2 { margin-top: 32px; border-top: 1px solid var(--border); padding-top: 20px; }
+.help-page .note-body h3 { color: var(--text-dim); }
+
 .btn {
   display: inline-block;
   padding: 6px 14px;

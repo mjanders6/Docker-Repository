@@ -6,20 +6,28 @@ Two flavors, both triggered by a fenced code block in a note's markdown body:
     ```query
     class: book
     tag: fiction
+    contains: hobbit
     sort: -date
     limit: 10
     columns: title, author, rating
     ```
 
     ```sql
-    SELECT title, author, rating FROM notes WHERE class = 'book' ORDER BY rating DESC
+    SELECT title, slug FROM notes WHERE body LIKE '%raspberry pi%'
     ```
 
 `query` blocks are a small, safe key:value filter over the note index --
-no injection surface at all. `sql` blocks run against a throwaway in-memory
-SQLite table (`notes`) rebuilt from disk on every render, with the
-connection locked to read-only (`PRAGMA query_only = ON`) and only a single
-SELECT statement permitted. Nothing is ever persisted to disk by a query.
+no injection surface at all. `contains:` does a case-insensitive full-text
+search over each note's title and markdown body (headings, paragraphs,
+everything), and pairs naturally with a `snippet` column showing the
+matched text in context.
+
+`sql` blocks run against a throwaway in-memory SQLite table (`notes`)
+rebuilt from disk on every render, with the connection locked to read-only
+(`PRAGMA query_only = ON`) and only a single SELECT statement permitted.
+The table includes a `body` column with each note's full markdown text, so
+`WHERE body LIKE '%phrase%'` searches headings and paragraphs directly.
+Nothing is ever persisted to disk by a query.
 """
 import html as html_lib
 import re
@@ -35,8 +43,10 @@ DEFAULT_LIMIT = 50
 
 # Base columns always present on the virtual `notes` table, plus every
 # field name declared by any class (so `SELECT author FROM notes` works
-# without the author having to know which class defines it).
-_BASE_COLUMNS = ["slug", "title", "class", "tags", "date"]
+# without the author having to know which class defines it). `body` holds
+# the note's full markdown text (headings, paragraphs, everything) so it
+# can be searched with LIKE.
+_BASE_COLUMNS = ["slug", "title", "class", "tags", "date", "body"]
 
 _SQL_FORBIDDEN = ("attach", "pragma", "vacuum", "detach", "reindex")
 
@@ -70,7 +80,8 @@ def _build_notes_db() -> sqlite3.Connection:
     for n in store.list_notes():
         full = store.get_note(n["slug"])
         meta = (full or {}).get("metadata", {}) or {}
-        row = [n["slug"], n["title"], n["class"], ", ".join(n["tags"]), str(n["date"] or "")]
+        note_body = (full or {}).get("body", "") or ""
+        row = [n["slug"], n["title"], n["class"], ", ".join(n["tags"]), str(n["date"] or ""), note_body]
         for fname in field_names:
             row.append(str(meta.get(fname, "") or ""))
         conn.execute(insert_sql, row)
@@ -115,6 +126,23 @@ def parse_simple_query(text: str) -> dict:
     return params
 
 
+def _snippet(text: str, needle: str, context: int = 50) -> str:
+    """Return a short excerpt of `text` centered on the first occurrence
+    of `needle` (case-insensitive), so search results show *where* a
+    phrase showed up rather than dumping the whole note body."""
+    if not text or not needle:
+        return ""
+    idx = text.lower().find(needle.lower())
+    if idx == -1:
+        return ""
+    start = max(0, idx - context)
+    end = min(len(text), idx + len(needle) + context)
+    excerpt = " ".join(text[start:end].split())  # collapse newlines/whitespace
+    prefix = "\u2026" if start > 0 else ""
+    suffix = "\u2026" if end < len(text) else ""
+    return f"{prefix}{excerpt}{suffix}"
+
+
 def run_simple_query(params: dict) -> tuple[list[str], list[tuple[str, list[str]]]]:
     notes = store.list_notes()
 
@@ -125,6 +153,24 @@ def run_simple_query(params: dict) -> tuple[list[str], list[tuple[str, list[str]
     tag = params.get("tag")
     if tag:
         notes = [n for n in notes if tag in n["tags"]]
+
+    # Cache full note bodies as we touch them, since `contains` and the
+    # `snippet`/`body` columns all need the same full-text lookups.
+    body_cache: dict[str, str] = {}
+
+    def _get_body(slug: str) -> str:
+        if slug not in body_cache:
+            full = store.get_note(slug)
+            body_cache[slug] = (full or {}).get("body", "") or ""
+        return body_cache[slug]
+
+    contains = params.get("contains")
+    if contains:
+        needle = contains.lower()
+        notes = [
+            n for n in notes
+            if needle in (n.get("title") or "").lower() or needle in _get_body(n["slug"]).lower()
+        ]
 
     sort_spec = params.get("sort", "-date")
     reverse = sort_spec.startswith("-")
@@ -141,6 +187,9 @@ def run_simple_query(params: dict) -> tuple[list[str], list[tuple[str, list[str]
     columns_param = params.get("columns")
     if columns_param:
         columns = [c.strip() for c in columns_param.split(",") if c.strip()]
+    elif contains:
+        # A search naturally wants to show *why* each note matched.
+        columns = ["title", "class", "date", "snippet"]
     else:
         columns = ["title", "class", "date", "tags"]
 
@@ -153,6 +202,14 @@ def run_simple_query(params: dict) -> tuple[list[str], list[tuple[str, list[str]
                 row.append(", ".join(n.get("tags", [])))
             elif col in ("title", "class", "date", "slug"):
                 row.append(str(n.get(col, "")))
+            elif col == "body":
+                row.append(_get_body(n["slug"]))
+            elif col == "snippet":
+                needle = contains or ""
+                snippet = _snippet(_get_body(n["slug"]), needle) if needle else ""
+                if not snippet and needle and needle.lower() in (n.get("title") or "").lower():
+                    snippet = n.get("title", "")
+                row.append(snippet)
             else:
                 if full_meta is None:
                     full = store.get_note(n["slug"])

@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import query_engine, store
+from . import help_content, query_engine, store
 
 app = FastAPI(title="Markdown Wiki")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -59,6 +59,15 @@ def _parse_fields_form(form) -> list[dict]:
             continue
         fields.append({"name": n, "label": (l or "").strip() or n, "default": d or ""})
     return fields
+
+
+@app.get("/help", response_class=HTMLResponse)
+def help_page(request: Request):
+    """Static in-app documentation. Rendered with plain markdown (no query-
+    block interception) so the example ```query/```sql snippets in the
+    docs display as code instead of trying to execute."""
+    html = md.markdown(help_content.HELP_MARKDOWN, extensions=MD_EXTENSIONS)
+    return templates.TemplateResponse("help.html", {"request": request, "html": html})
 
 
 @app.get("/", response_class=HTMLResponse)
