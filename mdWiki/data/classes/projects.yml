@@ -1,0 +1,24 @@
+name: projects
+label: Projects
+icon: 📊
+fields:
+- name: purpose
+  label: Purpose
+  default: ''
+- name: priority
+  label: Priority
+  default: ''
+- name: goals
+  label: Goals
+  default: ''
+- name: assignedTo
+  label: Assigned To
+  default: ''
+- name: startDate
+  label: Start Date
+  default: ''
+- name: endDate
+  label: Completion Date
+  default: ''
+template: "# Description\r\n\r\n# Purpose\r\n\r\n# Scope\r\n\r\n## Scope Includes\r\
+  \n\r\n## Scope Excludes"

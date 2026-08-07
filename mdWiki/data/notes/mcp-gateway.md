@@ -1,13 +1,12 @@
 ---
-title: Docker MCP Gateway
 class: service
+date: '2026-08-03'
+host: ''
+port: ''
+status: running
 tags:
 - homelab
-- mcp
-date: '2026-07-31'
-host: docker-mcp-gateway
-port: '8811'
-status: running
+title: Docker MCP Gateway
 ---
 
 ## Purpose
