@@ -31,7 +31,8 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--border);
   background: var(--bg-alt);
 }
-.brand { font-weight: 600; font-size: 1.1em; color: var(--text); }
+.brand { font-weight: 600; font-size: 1.1em; color: var(--text); display: inline-flex; align-items: baseline; gap: 8px; }
+.version-tag { font-size: 0.65em; font-weight: 400; color: var(--text-dim); }
 .new-btn {
   background: var(--accent);
   color: #fff;

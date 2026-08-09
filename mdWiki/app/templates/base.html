@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Markdown Wiki{% endblock %}</title>
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/">📓 Markdown Wiki</a>
+    <a class="brand" href="/">📓 {{ app_name }}<span class="version-tag">v{{ app_version }}</span></a>
     <nav class="topnav">
       <a href="/help">Help</a>
       <a href="/classes">Manage Classes</a>

@@ -8,13 +8,15 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import help_content, query_engine, render_extras, store
+from . import __version__, help_content, query_engine, render_extras, store
 
-app = FastAPI(title="Markdown Wiki")
+app = FastAPI(title="mdWiki", version=__version__)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 templates.env.filters["dt"] = lambda ts: datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
 templates.env.filters["truthy"] = store.is_truthy
+templates.env.globals["app_name"] = "mdWiki"
+templates.env.globals["app_version"] = __version__
 
 MD_EXTENSIONS = ["extra", "toc", "sane_lists", "fenced_code"]
 

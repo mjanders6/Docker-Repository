@@ -1,4 +1,6 @@
-# Markdown Wiki
+# mdWiki
+
+**Version:** 2.0.0
 
 A minimal, self-hosted, Docker-based markdown wiki. No database, no
 third-party service, no telemetry — just `.md` files with YAML frontmatter
@@ -87,7 +89,7 @@ template: |
 It'll immediately show up as an option on the "New Note" page and in the
 sidebar filter — no code changes needed.
 
-## What's intentionally NOT here (v1 scope)
+## What's intentionally NOT here (yet)
 
 - No auth/login (put it behind your reverse proxy / VPN, e.g. what you're
   likely already using for other homelab services)
