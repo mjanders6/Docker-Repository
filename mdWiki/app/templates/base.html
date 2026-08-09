@@ -10,8 +10,9 @@
   <header class="topbar">
     <a class="brand" href="/">📓 {{ app_name }}<span class="version-tag">v{{ app_version }}</span></a>
     <nav class="topnav">
-      <a href="/help">Help</a>
-      <a href="/classes">Manage Classes</a>
+      <a href="/" class="{{ 'active' if request.url.path == '/' }}">Notes</a>
+      <a href="/classes" class="{{ 'active' if request.url.path.startswith('/classes') }}">Classes</a>
+      <a href="/help" class="{{ 'active' if request.url.path == '/help' }}">Help</a>
       <a class="new-btn" href="/new">+ New Note</a>
     </nav>
   </header>

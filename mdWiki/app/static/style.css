@@ -171,18 +171,28 @@ input[type=text], input[type=date], select {
 .preview-pane { background: var(--bg); }
 
 /* --- topnav --- */
-.topnav { display: flex; align-items: center; gap: 16px; }
-.topnav > a:not(.new-btn) { color: var(--text-dim); font-size: 0.9em; }
-.topnav > a:not(.new-btn):hover { color: var(--text); }
+.topnav { display: flex; align-items: center; gap: 20px; }
+.topnav > a:not(.new-btn) { color: var(--text-dim); font-size: 0.9em; padding: 4px 2px; border-bottom: 2px solid transparent; }
+.topnav > a:not(.new-btn):hover { color: var(--text); text-decoration: none; }
+.topnav > a.active:not(.new-btn) { color: var(--text); border-bottom-color: var(--accent); }
 
-/* --- home page: search + stats --- */
-.home-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-.search-form { display: flex; gap: 8px; flex: 1; max-width: 420px; }
+/* --- home page: hero header + search --- */
+.home-hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+.home-hero h1 { margin: 0 0 4px; font-size: 1.6em; }
+.home-sub { margin: 0; color: var(--text-dim); font-size: 0.9em; }
+.search-form { display: flex; gap: 8px; align-items: center; }
 .search-input {
-  flex: 1; padding: 7px 10px; background: var(--bg-alt); border: 1px solid var(--border);
+  width: 260px; padding: 8px 12px; background: var(--bg-alt); border: 1px solid var(--border);
   border-radius: var(--radius); color: var(--text); font-size: 0.95em;
 }
-.home-stats { color: var(--text-dim); font-size: 0.85em; white-space: nowrap; }
+.search-input:focus { outline: none; border-color: var(--accent); }
+
+/* --- empty state --- */
+.empty-state {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+  padding: 32px; background: var(--bg-alt); border: 1px dashed var(--border); border-radius: var(--radius);
+  color: var(--text-dim);
+}
 
 /* --- sidebar counts + tags + manage link --- */
 .filter-list a { display: flex; justify-content: space-between; align-items: center; gap: 8px; }

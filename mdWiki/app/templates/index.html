@@ -1,14 +1,17 @@
 {% extends "base.html" %}
-{% block title %}All Notes{% endblock %}
+{% block title %}Notes{% endblock %}
 {% block content %}
-<div class="home-header">
+<div class="home-hero">
+  <div>
+    <h1>Notes</h1>
+    <p class="home-sub">{{ total_notes }} note{{ '' if total_notes == 1 else 's' }}{% if class_filter or tag or q %} &middot; filtered{% endif %}</p>
+  </div>
   <form class="search-form" method="get" action="/">
     {% if class_filter %}<input type="hidden" name="class_filter" value="{{ class_filter }}">{% endif %}
     {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
-    <input type="text" name="q" value="{{ q }}" placeholder="Search title, slug, tags..." class="search-input">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search notes..." class="search-input" autofocus>
     {% if q %}<a href="/" class="btn">Clear</a>{% endif %}
   </form>
-  <div class="home-stats">{{ total_notes }} note{{ '' if total_notes == 1 else 's' }} total</div>
 </div>
 
 <div class="layout">
@@ -18,7 +21,7 @@
       <li><a href="/" class="{{ 'active' if not class_filter }}">All <span class="count">{{ total_notes }}</span></a></li>
       {% for c in classes %}
         <li><a href="/?class_filter={{ c.name }}" class="{{ 'active' if class_filter == c.name }}">
-          {{ c.icon or '' }} {{ c.label or c.name }}
+          <span>{{ c.icon or '📄' }} {{ c.label or c.name }}</span>
           <span class="count">{{ class_counts.get(c.name, 0) }}</span>
         </a></li>
       {% endfor %}
@@ -38,23 +41,25 @@
   <section class="note-list">
     {% if class_filter or tag or q %}
       <div class="active-filters">
-        Filtered by:
         {% if class_filter %}<span class="badge">{{ class_filter }}</span>{% endif %}
         {% if tag %}<span class="tag">#{{ tag }}</span>{% endif %}
         {% if q %}<span class="tag">"{{ q }}"</span>{% endif %}
-        <a href="/">clear all</a>
+        <a href="/">clear</a>
       </div>
     {% endif %}
 
     {% if not notes %}
-      <p class="empty">No notes match. <a href="/new">Create one</a>.</p>
+      <div class="empty-state">
+        <p>No notes match.</p>
+        <a class="btn btn-primary" href="/new">+ Create a note</a>
+      </div>
     {% endif %}
     {% for n in notes %}
       <a class="note-card" href="/note/{{ n.slug }}">
         <div class="note-card-title">{{ n.title }}</div>
         <div class="note-card-meta">
           {% if n.class %}<span class="badge">{{ n.class }}</span>{% endif %}
-          <span class="date">edited {{ n.mtime | dt }}</span>
+          <span class="date">{{ n.mtime | dt }}</span>
           {% for t in n.tags %}<span class="tag">#{{ t }}</span>{% endfor %}
         </div>
       </a>
