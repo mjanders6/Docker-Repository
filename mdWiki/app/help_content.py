@@ -25,6 +25,24 @@ starter template for new notes. Manage them from **Manage Classes** in the
 top nav -- add a `book` class with `author`/`rating` fields, a `meeting`
 class with `attendees`, whatever fits how you organize things.
 
+**Field types:** each field on a class has a type, chosen from a dropdown
+when you add it:
+
+| Type | Renders as | Stored as |
+|---|---|---|
+| Text | single-line text box | plain string |
+| Multi-line text | textarea | plain string (newlines kept) |
+| Number | number input | numeric string |
+| Date | date picker | `YYYY-MM-DD` string |
+| Yes/No (checkbox) | checkbox | `"true"` / `"false"` string |
+| URL | URL input, and rendered as a clickable link on the note view page | plain string |
+
+Everything is still plain text in the underlying `.md`/`.yml` files -- the
+type only changes which input widget the editor shows you and how the
+value displays on the view page (e.g. a checkbox field shows Yes/No
+instead of the raw string). Fields saved before this existed default to
+Text, so nothing breaks; edit the class and change their type any time.
+
 **Changing a note's class:** open a note and hit **Edit**. The Class
 dropdown can be changed at any time, even long after the note was created.
 Switching it swaps in that class's fields immediately (no page reload).

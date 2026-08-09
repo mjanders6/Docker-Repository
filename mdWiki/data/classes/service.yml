@@ -8,6 +8,7 @@ fields:
   - name: port
     label: Port
     default: ""
+    type: number
   - name: status
     label: Status
     default: "running"

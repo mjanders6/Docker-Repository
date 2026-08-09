@@ -17,8 +17,10 @@ fields:
 - name: startDate
   label: Start Date
   default: ''
+  type: date
 - name: endDate
   label: Completion Date
   default: ''
+  type: date
 template: "# Description\r\n\r\n# Purpose\r\n\r\n# Scope\r\n\r\n## Scope Includes\r\
   \n\r\n## Scope Excludes"

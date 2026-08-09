@@ -115,6 +115,10 @@ li:has(> .task-checkbox) { list-style: none; margin-left: -1.2em; }
 .link-insert-row { display: flex; gap: 8px; align-items: center; }
 .link-insert-row input[type=text] { flex: 1; }
 
+/* --- typed class fields in the note editor --- */
+.checkbox-field-label { flex-direction: row !important; align-items: center; gap: 6px !important; }
+.checkbox-field-label input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); }
+
 /* --- /help page --- */
 .help-page .note-body table:not(.query-table) {
   width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em;
@@ -215,9 +219,9 @@ input[type=text], input[type=date], select {
 .fields-header { display: flex; justify-content: space-between; align-items: center; }
 .fields-header h3 { margin: 0; font-size: 0.85em; text-transform: uppercase; color: var(--text-dim); }
 .field-row-editable {
-  display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; align-items: center;
+  display: grid; grid-template-columns: 1fr 1fr 0.9fr 1fr auto; gap: 8px; align-items: center;
 }
-.field-row-editable input { width: 100%; }
+.field-row-editable input, .field-row-editable select { width: 100%; }
 .template-label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85em; color: var(--text-dim); }
 .template-textarea {
   min-height: 140px; padding: 12px; background: var(--bg-alt); border: 1px solid var(--border);

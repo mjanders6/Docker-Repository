@@ -23,7 +23,11 @@
   <div class="note-fields">
     {% for field in cls.fields %}
       {% set val = note.metadata.get(field.name) %}
-      {% if val %}
+      {% if field.type == 'checkbox' %}
+        <div class="field-row"><strong>{{ field.label or field.name }}:</strong> {{ 'Yes' if val|truthy else 'No' }}</div>
+      {% elif field.type == 'url' and val %}
+        <div class="field-row"><strong>{{ field.label or field.name }}:</strong> <a href="{{ val }}" target="_blank" rel="noopener">{{ val }}</a></div>
+      {% elif val %}
         <div class="field-row"><strong>{{ field.label or field.name }}:</strong> {{ val }}</div>
       {% endif %}
     {% endfor %}

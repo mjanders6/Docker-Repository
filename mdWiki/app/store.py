@@ -16,6 +16,31 @@ CLASSES_DIR = Path(os.environ.get("CLASSES_DIR", "/data/classes"))
 SLUG_RE = re.compile(r"[^a-z0-9\-/]+")
 CLASS_NAME_RE = re.compile(r"[^a-z0-9_\-]+")
 
+# Recognized field types for class-defined fields. Anything else read from
+# disk (or submitted by a form) falls back to "text" -- this is what keeps
+# older class .yml files (saved before field types existed) working
+# unchanged: every field on them simply normalizes to "text", identical to
+# their previous untyped behavior.
+FIELD_TYPES = ["text", "textarea", "number", "date", "checkbox", "url"]
+DEFAULT_FIELD_TYPE = "text"
+
+
+def _normalize_fields(fields: list[dict] | None) -> list[dict]:
+    out = []
+    for f in fields or []:
+        f = dict(f)
+        f.setdefault("default", "")
+        if f.get("type") not in FIELD_TYPES:
+            f["type"] = DEFAULT_FIELD_TYPE
+        out.append(f)
+    return out
+
+
+def is_truthy(value) -> bool:
+    """Interpret a stored checkbox-field value (which is always a plain
+    string like everything else in frontmatter) as a boolean."""
+    return str(value).strip().lower() in ("true", "1", "on", "yes")
+
 
 def slugify(text: str) -> str:
     text = text.lower().strip().replace(" ", "-")
@@ -38,7 +63,7 @@ def list_classes() -> list[dict]:
         with open(path) as f:
             data = yaml.safe_load(f) or {}
         data.setdefault("name", path.stem)
-        data.setdefault("fields", [])
+        data["fields"] = _normalize_fields(data.get("fields"))
         classes.append(data)
     return classes
 
@@ -52,7 +77,7 @@ def get_class(name: str) -> dict | None:
     with open(path) as f:
         data = yaml.safe_load(f) or {}
     data.setdefault("name", name)
-    data.setdefault("fields", [])
+    data["fields"] = _normalize_fields(data.get("fields"))
     return data
 
 

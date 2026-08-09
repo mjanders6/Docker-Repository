@@ -1,8 +1,31 @@
 {% if cls and cls.fields %}
   {% for field in cls.fields %}
     {% set val = (values or {}).get(field.name, field.default or '') %}
-    <label>{{ field.label or field.name }}
-      <input type="text" name="{{ field.name }}" value="{{ val }}">
-    </label>
+    {% if field.type == 'checkbox' %}
+      <label class="checkbox-field-label">
+        <input type="checkbox" name="{{ field.name }}" value="true" {{ 'checked' if val|truthy }}>
+        {{ field.label or field.name }}
+      </label>
+    {% elif field.type == 'textarea' %}
+      <label>{{ field.label or field.name }}
+        <textarea name="{{ field.name }}" rows="3">{{ val }}</textarea>
+      </label>
+    {% elif field.type == 'number' %}
+      <label>{{ field.label or field.name }}
+        <input type="number" name="{{ field.name }}" value="{{ val }}" step="any">
+      </label>
+    {% elif field.type == 'date' %}
+      <label>{{ field.label or field.name }}
+        <input type="date" name="{{ field.name }}" value="{{ val }}">
+      </label>
+    {% elif field.type == 'url' %}
+      <label>{{ field.label or field.name }}
+        <input type="url" name="{{ field.name }}" value="{{ val }}" placeholder="https://...">
+      </label>
+    {% else %}
+      <label>{{ field.label or field.name }}
+        <input type="text" name="{{ field.name }}" value="{{ val }}">
+      </label>
+    {% endif %}
   {% endfor %}
 {% endif %}

@@ -13,7 +13,11 @@ server-side.
 - **Classes** live under `data/classes/` as `.yml` files. A class defines:
   - `label` / `icon` — how it's displayed
   - `fields` — extra frontmatter fields notes of this class have, each with
-    a `name`, `label`, and `default`
+    a `name`, `label`, `default`, and `type` (`text`, `textarea`, `number`,
+    `date`, `checkbox`, or `url` — controls which input widget the editor
+    shows and how the value is displayed; everything is still stored as
+    plain text/YAML underneath). Fields from before `type` existed default
+    to `text`.
   - `template` — starter markdown body for new notes of this class
 - A note references its class with `class: meeting` in its frontmatter.
   The editor reads the class file to know which extra fields to show.
@@ -61,9 +65,19 @@ fields:
   - name: author
     label: Author
     default: ""
+    type: text
   - name: rating
     label: Rating (1-5)
     default: ""
+    type: number
+  - name: read_by
+    label: Finish by
+    default: ""
+    type: date
+  - name: recommended
+    label: Would recommend
+    default: ""
+    type: checkbox
 template: |
   ## Summary
 

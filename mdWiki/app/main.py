@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from itertools import zip_longest
 
 import markdown as md
 from fastapi import FastAPI, Request
@@ -13,6 +14,7 @@ app = FastAPI(title="Markdown Wiki")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 templates.env.filters["dt"] = lambda ts: datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
+templates.env.filters["truthy"] = store.is_truthy
 
 MD_EXTENSIONS = ["extra", "toc", "sane_lists", "fenced_code"]
 
@@ -47,19 +49,23 @@ def render_markdown(text: str) -> str:
 
 
 def _parse_fields_form(form) -> list[dict]:
-    """Zip the repeated field_name/field_label/field_default inputs from a
-    class form into the list-of-dicts shape store.save_class expects. Rows
-    with a blank name are dropped (lets the "+ Add field" UI leave a
-    trailing empty row without producing junk fields)."""
+    """Zip the repeated field_name/field_label/field_default/field_type
+    inputs from a class form into the list-of-dicts shape store.save_class
+    expects. Rows with a blank name are dropped (lets the "+ Add field"
+    UI leave a trailing empty row without producing junk fields). Missing
+    or unrecognized types fall back to "text"; itertools.zip_longest
+    guards against the lists ever coming back mismatched in length."""
     names = form.getlist("field_name")
     labels = form.getlist("field_label")
     defaults = form.getlist("field_default")
+    types = form.getlist("field_type")
     fields = []
-    for n, l, d in zip(names, labels, defaults):
+    for n, l, d, t in zip_longest(names, labels, defaults, types, fillvalue=""):
         n = (n or "").strip()
         if not n:
             continue
-        fields.append({"name": n, "label": (l or "").strip() or n, "default": d or ""})
+        t = t if t in store.FIELD_TYPES else store.DEFAULT_FIELD_TYPE
+        fields.append({"name": n, "label": (l or "").strip() or n, "default": d or "", "type": t})
     return fields
 
 
@@ -140,7 +146,13 @@ async def save_note_submit(slug: str, request: Request):
     if cls:
         for field in cls.get("fields", []):
             fname = field.get("name")
-            if fname and fname in form:
+            if not fname:
+                continue
+            if field.get("type") == "checkbox":
+                # Unchecked checkboxes aren't submitted at all, so absence
+                # from the form IS the "false" state, not "leave as-is".
+                metadata[fname] = "true" if fname in form else "false"
+            elif fname in form:
                 metadata[fname] = form.get(fname, "")
 
     store.save_note(slug, metadata, body)
