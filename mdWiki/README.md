@@ -22,6 +22,21 @@ Because it's all flat files, you can edit notes directly with any text
 editor (or sync the `data/` folder with git, Syncthing, etc.) and the app
 will pick up changes on next page load.
 
+- **Wikilinks** -- `[[Note Title]]` (or `[[slug]]`, or `[[target|display
+  text]]`) anywhere in a note's body links to another note by title or
+  slug. If the target doesn't exist yet, the rendered link is styled as
+  "not created" and clicking it creates an empty note with that title and
+  opens it in the editor -- link first, write later. The editor also has
+  an **+ Insert Link** box (with autocomplete over existing titles) that
+  inserts the `[[...]]` syntax at the cursor for you.
+- **Task lists** -- standard `- [ ] ...` / `- [x] ...` markdown renders as
+  live, clickable checkboxes. Checking one on a note's view page saves
+  instantly (flips the marker in the `.md` file); checking one in the
+  editor's preview pane updates the draft instead, saved along with the
+  rest of your edits.
+- **Cancel** -- the note editor and both class forms have a Cancel button
+  that backs out without saving changes.
+
 ## Running it
 
 ```bash
@@ -64,8 +79,8 @@ sidebar filter — no code changes needed.
   likely already using for other homelab services)
 - No full-text search (can add a simple filename/content grep-based search
   next)
-- No wikilinks / backlinks between notes (straightforward to add — parse
-  `[[note-slug]]` syntax in the markdown renderer)
+- No backlinks panel (wikilinks resolve and render, but nothing shows
+  "notes that link here" yet — would need a body scan across all notes)
 - No image/file uploads (attach via a `static/uploads` mount + `<img>` in
   markdown for now)
 - No live-collaboration or version history (git in the data dir handles

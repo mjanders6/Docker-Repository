@@ -101,6 +101,20 @@ a:hover { text-decoration: underline; }
 }
 .query-empty { color: var(--text-dim); font-size: 0.9em; margin: 12px 0; font-style: italic; }
 
+/* --- wikilinks --- */
+.wikilink { border-bottom: 1px dotted var(--accent-dim); }
+.wikilink-new { color: var(--text-dim); border-bottom: 1px dashed var(--danger); }
+.wikilink-new:hover { color: var(--danger); }
+
+/* --- clickable task-list checkboxes --- */
+.task-checkbox { width: 15px; height: 15px; vertical-align: middle; margin: 0 2px 0 0; cursor: pointer; accent-color: var(--accent); }
+.task-checkbox:checked ~ .task-text { text-decoration: line-through; color: var(--text-dim); }
+li:has(> .task-checkbox) { list-style: none; margin-left: -1.2em; }
+
+/* --- editor: link-insert row --- */
+.link-insert-row { display: flex; gap: 8px; align-items: center; }
+.link-insert-row input[type=text] { flex: 1; }
+
 /* --- /help page --- */
 .help-page .note-body table:not(.query-table) {
   width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em;

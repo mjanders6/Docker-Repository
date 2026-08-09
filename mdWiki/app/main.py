@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import help_content, query_engine, store
+from . import help_content, query_engine, render_extras, store
 
 app = FastAPI(title="Markdown Wiki")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -35,6 +35,8 @@ def render_markdown(text: str) -> str:
         return f'\n\n<div class="query-placeholder" data-qidx="{idx}"></div>\n\n'
 
     text = query_engine.QUERY_BLOCK_RE.sub(_stash, text)
+    text = render_extras.render_wikilinks(text)
+    text = render_extras.render_tasks(text)
     html_out = md.markdown(text, extensions=MD_EXTENSIONS)
 
     def _splice(m: re.Match) -> str:
@@ -106,8 +108,10 @@ def edit_note_form(request: Request, slug: str):
         return HTMLResponse(f"Note '{slug}' not found", status_code=404)
     cls = store.get_class(note["metadata"].get("class", ""))
     classes = store.list_classes()
+    all_notes = [n for n in store.list_notes() if n["slug"] != slug]
     return templates.TemplateResponse("edit.html", {
         "request": request, "note": note, "cls": cls, "classes": classes,
+        "values": note["metadata"], "all_notes": all_notes,
     })
 
 
@@ -141,6 +145,42 @@ async def save_note_submit(slug: str, request: Request):
 
     store.save_note(slug, metadata, body)
     return RedirectResponse(f"/note/{slug}", status_code=303)
+
+
+@app.get("/link/{slug:path}")
+def follow_wikilink(slug: str, title: str = ""):
+    """Followed when a [[wikilink]] points at a note that doesn't exist
+    yet -- creates an empty note (title = the link text, no class) and
+    drops straight into the editor, mirroring the "link now, write later"
+    flow most wiki tools use. If the note has since been created (e.g. two
+    links to the same new title), just goes to it instead of overwriting."""
+    existing = store.get_note(slug)
+    if existing:
+        return RedirectResponse(f"/note/{slug}", status_code=303)
+    metadata, body = store.new_note_defaults("", title or slug)
+    store.save_note(slug, metadata, body)
+    return RedirectResponse(f"/note/{slug}/edit", status_code=303)
+
+
+@app.post("/note/{slug:path}/toggle-task")
+async def toggle_task_route(slug: str, request: Request):
+    """Flip a single task-list checkbox's [ ]/[x] marker directly in the
+    stored note body. `index` is the 0-based position of the checkbox
+    among all task items in the note, assigned in the same left-to-right,
+    top-to-bottom order render_tasks() renders them in."""
+    form = await request.form()
+    try:
+        index = int(form.get("index", "-1"))
+    except ValueError:
+        index = -1
+    note = store.get_note(slug)
+    if not note or index < 0:
+        return HTMLResponse("Invalid request", status_code=400)
+    new_body, found = render_extras.toggle_task(note["body"], index)
+    if not found:
+        return HTMLResponse("Task not found", status_code=404)
+    store.save_note(slug, note["metadata"], new_body)
+    return HTMLResponse("ok")
 
 
 @app.get("/note/{slug:path}", response_class=HTMLResponse)

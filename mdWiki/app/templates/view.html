@@ -34,4 +34,27 @@
     {{ html | safe }}
   </div>
 </article>
+
+<script>
+  // Task-list checkboxes are live here (not disabled) -- clicking one
+  // POSTs to /note/{slug}/toggle-task, which flips the matching [ ]/[x]
+  // marker directly in the saved file. Reverts the checkbox visually if
+  // the save fails, so the UI never silently disagrees with disk.
+  document.querySelectorAll('.note-body .task-checkbox').forEach((cb) => {
+    cb.addEventListener('change', async () => {
+      const wasChecked = cb.checked;
+      try {
+        const res = await fetch('/note/{{ note.slug }}/toggle-task', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: 'index=' + encodeURIComponent(cb.dataset.taskIndex),
+        });
+        if (!res.ok) throw new Error('toggle failed');
+      } catch (err) {
+        cb.checked = !wasChecked;
+        alert("Couldn't save that checkbox change -- please try again.");
+      }
+    });
+  });
+</script>
 {% endblock %}

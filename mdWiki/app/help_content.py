@@ -31,6 +31,51 @@ Switching it swaps in that class's fields immediately (no page reload).
 Saving drops any fields from the old class that the new class doesn't
 define -- only the current class's fields are kept.
 
+**Cancel:** the editor's **Cancel** button (next to Save) drops you back
+on the note without submitting the form. **Manage Classes** forms have
+the same Cancel button, back to the class list.
+
+## Linking notes
+
+Link to another note from anywhere in a note's body with double square
+brackets:
+
+```
+See [[Homelab Overview]] for the full picture.
+```
+
+Use a pipe to show different text than the title: `[[homelab-overview|the
+overview]]`. Either the note's **title** or its **slug** works as the
+link target.
+
+- If a note with that title/slug exists, the link goes straight to it.
+- If it doesn't exist yet, the link renders with a dashed underline --
+  clicking it **creates an empty note** (titled with the link text) and
+  drops you straight into the editor. That's the whole workflow: write
+  `[[Some New Idea]]`, save, click the new dashed link later to flesh it
+  out.
+
+The editor also has a **+ Insert Link** box above the text area: start
+typing a title (existing note titles autocomplete), hit the button, and
+it inserts `[[that title]]` at your cursor -- whether or not a note by
+that title exists yet.
+
+## Task lists
+
+Standard markdown task syntax renders as **clickable checkboxes**, both
+while viewing a note and live in the editor's preview pane:
+
+```
+- [ ] Order more SD cards
+- [x] Rack the new Pi
+```
+
+Checking a box on a note's **view** page saves immediately -- it flips
+the `[ ]`/`[x]` marker in the underlying `.md` file right away, no Save
+button needed. Checking a box in the **editor's preview pane** updates
+the draft in the text area instead (since the note may not be saved
+yet) -- it's part of your unsaved changes until you hit Save.
+
 ## Embedded queries
 
 Drop a fenced code block into any note's body using `query` or `sql` as

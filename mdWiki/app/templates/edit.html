@@ -4,6 +4,7 @@
 <form class="edit-form" method="post" action="/note/{{ note.slug }}/save">
   <div class="edit-toprow">
     <input type="text" name="title" value="{{ note.metadata.title or '' }}" placeholder="Title" class="title-input">
+    <a class="btn" href="/note/{{ note.slug }}">Cancel</a>
     <button class="btn btn-primary" type="submit">Save</button>
   </div>
 
@@ -28,6 +29,15 @@
 
   <div class="edit-class-fields" id="class-fields-container">
     {% include "_class_fields.html" %}
+  </div>
+
+  <div class="link-insert-row">
+    <input type="text" id="link-picker" list="note-titles-list"
+           placeholder="Link a note by title (new titles create it on click)...">
+    <datalist id="note-titles-list">
+      {% for n in all_notes %}<option value="{{ n.title }}">{% endfor %}
+    </datalist>
+    <button type="button" class="btn" id="insert-link-btn">+ Insert Link</button>
   </div>
 
   <div class="editor-split">
@@ -56,6 +66,50 @@
     timer = setTimeout(updatePreview, 300);
   });
   updatePreview();
+
+  // "+ Insert Link" wraps whatever's typed as a [[wikilink]] and drops it
+  // in at the cursor. If the title matches an existing note (the datalist
+  // options above) it'll resolve to that note; otherwise it renders as a
+  // "click to create" link once saved.
+  const linkPicker = document.getElementById('link-picker');
+  const insertLinkBtn = document.getElementById('insert-link-btn');
+  let lastCursorPos = null;
+  textarea.addEventListener('blur', () => { lastCursorPos = textarea.selectionStart; });
+
+  insertLinkBtn.addEventListener('click', () => {
+    const title = linkPicker.value.trim();
+    if (!title) { linkPicker.focus(); return; }
+    const snippet = `[[${title}]]`;
+    const pos = lastCursorPos != null ? lastCursorPos : textarea.value.length;
+    textarea.value = textarea.value.slice(0, pos) + snippet + textarea.value.slice(pos);
+    lastCursorPos = pos + snippet.length;
+    linkPicker.value = '';
+    updatePreview();
+  });
+
+  // Task-list checkboxes are live in the preview pane too, but the note
+  // isn't saved yet -- so a click flips the [ ]/[x] marker directly in
+  // the textarea (same 0-based indexing render_tasks/toggle_task use
+  // server-side) and re-renders the preview, instead of hitting the
+  // toggle-task endpoint.
+  function toggleTaskInText(text, index) {
+    const re = /^(\s*[-*+] )\[([ xX])\] (.*)$/gm;
+    let i = 0;
+    return text.replace(re, (match, prefix, mark, rest) => {
+      const isTarget = i === index;
+      i += 1;
+      if (!isTarget) return match;
+      const newMark = mark.toLowerCase() === 'x' ? ' ' : 'x';
+      return `${prefix}[${newMark}] ${rest}`;
+    });
+  }
+
+  preview.addEventListener('change', (e) => {
+    if (!e.target.classList.contains('task-checkbox')) return;
+    const idx = parseInt(e.target.dataset.taskIndex, 10);
+    textarea.value = toggleTaskInText(textarea.value, idx);
+    updatePreview();
+  });
 
   // Switching the class swaps in that class's extra fields (empty/default
   // values -- any values entered under the previous class aren't carried
