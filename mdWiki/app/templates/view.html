@@ -27,6 +27,18 @@
         <div class="field-row"><strong>{{ field.label or field.name }}:</strong> {{ 'Yes' if val|truthy else 'No' }}</div>
       {% elif field.type == 'url' and val %}
         <div class="field-row"><strong>{{ field.label or field.name }}:</strong> <a href="{{ val }}" target="_blank" rel="noopener">{{ val }}</a></div>
+      {% elif field.type == 'multiselect' and val %}
+        <div class="field-row"><strong>{{ field.label or field.name }}:</strong>
+          <div class="multiselect-display">
+            {% if val is iterable and val is not string %}
+              {% for item in val %}
+                <span class="multiselect-badge">{{ item }}</span>
+              {% endfor %}
+            {% else %}
+              <span class="multiselect-badge">{{ val }}</span>
+            {% endif %}
+          </div>
+        </div>
       {% elif val %}
         <div class="field-row"><strong>{{ field.label or field.name }}:</strong> {{ val }}</div>
       {% endif %}

@@ -125,6 +125,130 @@
     }
     const res = await fetch(`/classes/${encodeURIComponent(name)}/fields-partial`);
     fieldsContainer.innerHTML = await res.text();
+    initMultiselectComponents();
   });
+
+  // Initialize multiselect components
+  function initMultiselectComponents() {
+    document.querySelectorAll('.multiselect-wrapper').forEach(wrapper => {
+      const fieldName = wrapper.dataset.field;
+      const selected = wrapper.querySelector('.multiselect-selected');
+      const dropdown = wrapper.querySelector('.multiselect-dropdown');
+      const searchInput = wrapper.querySelector('.multiselect-search');
+      const filterInput = wrapper.querySelector('.multiselect-filter');
+      const options = wrapper.querySelectorAll('.multiselect-option');
+      const tagRemoveButtons = wrapper.querySelectorAll('.multiselect-tag-remove');
+
+      // Show/hide dropdown
+      const toggleDropdown = (show) => {
+        dropdown.style.display = show ? 'flex' : 'none';
+        if (show) filterInput?.focus();
+      };
+
+      selected.addEventListener('click', (e) => {
+        if (e.target.classList.contains('multiselect-tag-remove')) return;
+        toggleDropdown(dropdown.style.display === 'none');
+      });
+
+      searchInput.addEventListener('focus', () => toggleDropdown(true));
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') toggleDropdown(false);
+      });
+
+      // Filter options
+      filterInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        options.forEach(option => {
+          const label = option.querySelector('.multiselect-option-label').textContent.toLowerCase();
+          option.classList.toggle('hidden', !label.includes(query));
+        });
+      });
+
+      // Handle checkbox changes
+      options.forEach(option => {
+        const checkbox = option.querySelector('.multiselect-checkbox');
+        checkbox.addEventListener('change', () => {
+          updateMultiselectDisplay(wrapper);
+        });
+      });
+
+      // Remove tag
+      tagRemoveButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const tag = btn.closest('.multiselect-tag');
+          const value = tag.dataset.value;
+          const checkbox = Array.from(options)
+            .find(opt => opt.dataset.value === value)
+            ?.querySelector('.multiselect-checkbox');
+          if (checkbox) {
+            checkbox.checked = false;
+            updateMultiselectDisplay(wrapper);
+          }
+        });
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+          toggleDropdown(false);
+        }
+      });
+    });
+  }
+
+  function updateMultiselectDisplay(wrapper) {
+    const options = wrapper.querySelectorAll('.multiselect-option');
+    const selected = wrapper.querySelector('.multiselect-selected');
+    const hiddenInputsDiv = wrapper.querySelector('.multiselect-hidden-inputs');
+    const fieldName = wrapper.dataset.field;
+
+    const checkedValues = Array.from(options)
+      .filter(opt => opt.querySelector('.multiselect-checkbox').checked)
+      .map(opt => opt.dataset.value);
+
+    // Update tags
+    const tagsHtml = checkedValues
+      .map(val => `
+        <span class="multiselect-tag" data-value="${val}">
+          ${val}
+          <button type="button" class="multiselect-tag-remove" aria-label="Remove ${val}">&times;</button>
+        </span>
+      `).join('');
+
+    const searchInput = selected.querySelector('.multiselect-search');
+    selected.innerHTML = tagsHtml + `
+      <input type="text" class="multiselect-search" placeholder="Search or add..." autocomplete="off">
+    `;
+
+    // Re-attach event listeners to new remove buttons
+    selected.querySelectorAll('.multiselect-tag-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tag = btn.closest('.multiselect-tag');
+        const value = tag.dataset.value;
+        const checkbox = Array.from(options)
+          .find(opt => opt.dataset.value === value)
+          ?.querySelector('.multiselect-checkbox');
+        if (checkbox) {
+          checkbox.checked = false;
+          updateMultiselectDisplay(wrapper);
+        }
+      });
+    });
+
+    // Update hidden inputs for form submission
+    hiddenInputsDiv.innerHTML = checkedValues
+      .map(val => `<input type="hidden" name="${fieldName}" value="${val}">`)
+      .join('');
+
+    // Re-attach focus handler to new search input
+    selected.querySelector('.multiselect-search').addEventListener('focus', () => {
+      wrapper.querySelector('.multiselect-dropdown').style.display = 'flex';
+    });
+  }
+
+  // Initialize multiselect on page load
+  initMultiselectComponents();
 </script>
 {% endblock %}

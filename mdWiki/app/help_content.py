@@ -36,6 +36,14 @@ when you add it:
 | Date | date picker | `YYYY-MM-DD` string |
 | Yes/No (checkbox) | checkbox | `"true"` / `"false"` string |
 | URL | URL input, and rendered as a clickable link on the note view page | plain string |
+| Multi-select dropdown | custom dropdown with search & tag-based selection UI | YAML list of selected values |
+
+**Multi-select fields:** when you add a multi-select field, define its
+available options (one per line in the options textarea). The note editor
+renders it as a custom dropdown with checkboxes -- click options to toggle
+them, or search to filter. Selected values display as removable tags and
+are stored as a YAML list in the note's frontmatter. On the view page,
+selected items appear as styled badges.
 
 Everything is still plain text in the underlying `.md`/`.yml` files -- the
 type only changes which input widget the editor shows you and how the
