@@ -16,10 +16,13 @@ server-side.
   - `label` / `icon` — how it's displayed
   - `fields` — extra frontmatter fields notes of this class have, each with
     a `name`, `label`, `default`, and `type` (`text`, `textarea`, `number`,
-    `date`, `checkbox`, or `url` — controls which input widget the editor
-    shows and how the value is displayed; everything is still stored as
-    plain text/YAML underneath). Fields from before `type` existed default
-    to `text`.
+    `date`, `checkbox`, `url`, or `multiselect` — controls which input widget
+    the editor shows and how the value is displayed; everything is still
+    stored as plain text/YAML underneath). Fields from before `type` existed
+    default to `text`.
+    - `multiselect` fields require an `options` list (one option per line in
+      the class editor) and allow selecting multiple values in the note editor.
+      Selected values are stored as a YAML list in the note's frontmatter.
   - `template` — starter markdown body for new notes of this class
 - A note references its class with `class: meeting` in its frontmatter.
   The editor reads the class file to know which extra fields to show.
@@ -80,6 +83,17 @@ fields:
     label: Would recommend
     default: ""
     type: checkbox
+  - name: genres
+    label: Genres
+    default: "Fiction"
+    type: multiselect
+    options:
+      - Fiction
+      - Non-Fiction
+      - Mystery
+      - Science Fiction
+      - Biography
+      - History
 template: |
   ## Summary
 
