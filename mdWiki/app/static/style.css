@@ -233,6 +233,14 @@ input[type=text], input[type=date], select {
   display: grid; grid-template-columns: 1fr 1fr 0.9fr 1fr auto; gap: 8px; align-items: center;
 }
 .field-row-editable input, .field-row-editable select { width: 100%; }
+.field-options-row {
+  display: grid; grid-template-columns: 1fr 1fr 0.9fr 1fr auto; gap: 8px; margin: 0 0 10px 0; padding-left: 0;
+}
+.field-options-textarea {
+  grid-column: 1 / -2; min-height: 80px; padding: 8px; background: var(--bg-alt);
+  border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+  font-family: ui-monospace, monospace; font-size: 0.9em; resize: vertical;
+}
 .template-label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85em; color: var(--text-dim); }
 .template-textarea {
   min-height: 140px; padding: 12px; background: var(--bg-alt); border: 1px solid var(--border);

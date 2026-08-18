@@ -63,17 +63,23 @@
         <div class="field-row-editable">
           <input type="text" name="field_name" value="{{ field.name }}" placeholder="field name (e.g. author)">
           <input type="text" name="field_label" value="{{ field.label }}" placeholder="display label">
-          <select name="field_type">
+          <select name="field_type" class="field-type-select">
             <option value="text" {{ 'selected' if field.type == 'text' }}>Text</option>
             <option value="textarea" {{ 'selected' if field.type == 'textarea' }}>Multi-line text</option>
             <option value="number" {{ 'selected' if field.type == 'number' }}>Number</option>
             <option value="date" {{ 'selected' if field.type == 'date' }}>Date</option>
             <option value="checkbox" {{ 'selected' if field.type == 'checkbox' }}>Yes/No (checkbox)</option>
             <option value="url" {{ 'selected' if field.type == 'url' }}>URL</option>
+            <option value="multiselect" {{ 'selected' if field.type == 'multiselect' }}>Multi-select dropdown</option>
           </select>
           <input type="text" name="field_default" value="{{ field.default }}" placeholder="default value" class="field-default-input">
           <button type="button" class="btn btn-danger remove-field-btn">&times;</button>
         </div>
+        {% if field.type == 'multiselect' %}
+        <div class="field-options-row">
+          <textarea name="field_options" placeholder="Options (one per line)" class="field-options-textarea">{{ field.options|join('\n') if field.options }}</textarea>
+        </div>
+        {% endif %}
         {% endfor %}
       {% endif %}
     </div>
@@ -93,13 +99,14 @@
   <div class="field-row-editable">
     <input type="text" name="field_name" placeholder="field name (e.g. author)">
     <input type="text" name="field_label" placeholder="display label">
-    <select name="field_type">
+    <select name="field_type" class="field-type-select">
       <option value="text" selected>Text</option>
       <option value="textarea">Multi-line text</option>
       <option value="number">Number</option>
       <option value="date">Date</option>
       <option value="checkbox">Yes/No (checkbox)</option>
       <option value="url">URL</option>
+      <option value="multiselect">Multi-select dropdown</option>
     </select>
     <input type="text" name="field_default" placeholder="default value" class="field-default-input">
     <button type="button" class="btn btn-danger remove-field-btn">&times;</button>
@@ -120,6 +127,7 @@
     date: 'e.g. 2026-01-01',
     checkbox: 'true or false',
     url: 'https://...',
+    multiselect: 'initial selected option',
   };
 
   function wireFieldRow(row) {
@@ -133,12 +141,47 @@
     applyPlaceholder();
   }
 
+  // Toggle options textarea visibility based on field type
+  function updateFieldOptionsVisibility() {
+    container.querySelectorAll('.field-row-editable').forEach((row, idx) => {
+      const typeSelect = row.querySelector('select[name="field_type"]');
+      if (!typeSelect) return;
+      const optionsRow = row.nextElementSibling;
+      if (typeSelect.value === 'multiselect') {
+        if (!optionsRow || !optionsRow.classList.contains('field-options-row')) {
+          const optionsDiv = document.createElement('div');
+          optionsDiv.className = 'field-options-row';
+          const textarea = document.createElement('textarea');
+          textarea.name = 'field_options';
+          textarea.className = 'field-options-textarea';
+          textarea.placeholder = 'Options (one per line)';
+          optionsDiv.appendChild(textarea);
+          row.insertAdjacentElement('afterend', optionsDiv);
+        }
+      } else {
+        if (optionsRow && optionsRow.classList.contains('field-options-row')) {
+          optionsRow.remove();
+        }
+      }
+    });
+  }
+
+  container.addEventListener('change', (e) => {
+    if (e.target.classList.contains('field-type-select')) {
+      updateFieldOptionsVisibility();
+    }
+  });
+
   container.querySelectorAll('.field-row-editable').forEach(wireFieldRow);
+
+  // Initialize options visibility for existing multiselect fields
+  updateFieldOptionsVisibility();
 
   document.getElementById('add-field-btn').addEventListener('click', () => {
     const row = rowTemplate.content.cloneNode(true);
     container.appendChild(row);
     wireFieldRow(container.lastElementChild);
+    updateFieldOptionsVisibility();
   });
 
   container.addEventListener('click', (e) => {

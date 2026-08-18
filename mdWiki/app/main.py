@@ -51,9 +51,9 @@ def render_markdown(text: str) -> str:
 
 
 def _parse_fields_form(form) -> list[dict]:
-    """Zip the repeated field_name/field_label/field_default/field_type
+    """Zip the repeated field_name/field_label/field_default/field_type/field_options
     inputs from a class form into the list-of-dicts shape store.save_class
-    expects. Rows with a blank name are dropped (lets the "+ Add field"
+    expects. Rows with a blank name are dropped (lets the "+Add field"
     UI leave a trailing empty row without producing junk fields). Missing
     or unrecognized types fall back to "text"; itertools.zip_longest
     guards against the lists ever coming back mismatched in length."""
@@ -61,13 +61,18 @@ def _parse_fields_form(form) -> list[dict]:
     labels = form.getlist("field_label")
     defaults = form.getlist("field_default")
     types = form.getlist("field_type")
+    options_list = form.getlist("field_options")
     fields = []
-    for n, l, d, t in zip_longest(names, labels, defaults, types, fillvalue=""):
+    for n, l, d, t, opts in zip_longest(names, labels, defaults, types, options_list, fillvalue=""):
         n = (n or "").strip()
         if not n:
             continue
         t = t if t in store.FIELD_TYPES else store.DEFAULT_FIELD_TYPE
-        fields.append({"name": n, "label": (l or "").strip() or n, "default": d or "", "type": t})
+        field_dict = {"name": n, "label": (l or "").strip() or n, "default": d or "", "type": t}
+        # For multiselect fields, parse options from newline-separated text
+        if t == "multiselect" and opts:
+            field_dict["options"] = [o.strip() for o in opts.split("\n") if o.strip()]
+        fields.append(field_dict)
     return fields
 
 
@@ -154,6 +159,10 @@ async def save_note_submit(slug: str, request: Request):
                 # Unchecked checkboxes aren't submitted at all, so absence
                 # from the form IS the "false" state, not "leave as-is".
                 metadata[fname] = "true" if fname in form else "false"
+            elif field.get("type") == "multiselect":
+                # Multiselect fields submit multiple values
+                selected = form.getlist(fname)
+                metadata[fname] = selected if selected else []
             elif fname in form:
                 metadata[fname] = form.get(fname, "")
 

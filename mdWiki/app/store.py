@@ -21,7 +21,7 @@ CLASS_NAME_RE = re.compile(r"[^a-z0-9_\-]+")
 # older class .yml files (saved before field types existed) working
 # unchanged: every field on them simply normalizes to "text", identical to
 # their previous untyped behavior.
-FIELD_TYPES = ["text", "textarea", "number", "date", "checkbox", "url"]
+FIELD_TYPES = ["text", "textarea", "number", "date", "checkbox", "url", "multiselect"]
 DEFAULT_FIELD_TYPE = "text"
 
 
@@ -32,6 +32,14 @@ def _normalize_fields(fields: list[dict] | None) -> list[dict]:
         f.setdefault("default", "")
         if f.get("type") not in FIELD_TYPES:
             f["type"] = DEFAULT_FIELD_TYPE
+        # For multiselect fields, ensure options is a list
+        if f.get("type") == "multiselect":
+            options = f.get("options", [])
+            if isinstance(options, str):
+                # Convert comma-separated string to list (for backward compat)
+                f["options"] = [o.strip() for o in options.split(",") if o.strip()]
+            else:
+                f["options"] = options if isinstance(options, list) else []
         out.append(f)
     return out
 

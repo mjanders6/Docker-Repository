@@ -22,6 +22,15 @@
       <label>{{ field.label or field.name }}
         <input type="url" name="{{ field.name }}" value="{{ val }}" placeholder="https://...">
       </label>
+    {% elif field.type == 'multiselect' %}
+      <label>{{ field.label or field.name }}
+        <select name="{{ field.name }}" multiple>
+          {% for option in field.options or [] %}
+            {% set is_selected = (val is iterable and val is not string and option in val) or (val is string and option == val) %}
+            <option value="{{ option }}" {{ 'selected' if is_selected }}>{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
     {% else %}
       <label>{{ field.label or field.name }}
         <input type="text" name="{{ field.name }}" value="{{ val }}">
