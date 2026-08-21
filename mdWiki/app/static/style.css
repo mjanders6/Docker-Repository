@@ -273,6 +273,11 @@ input[type=text], input[type=date], select {
 }
 .preview-pane { background: var(--bg); }
 
+@media (max-width: 700px) {
+  .editor-split { flex-direction: column; height: auto; }
+  .body-textarea, .preview-pane { flex: none; min-height: 40vh; }
+}
+
 /* --- topnav --- */
 .topnav { display: flex; align-items: center; gap: 20px; }
 .topnav > a:not(.new-btn) { color: var(--text-dim); font-size: 0.9em; padding: 4px 2px; border-bottom: 2px solid transparent; }
