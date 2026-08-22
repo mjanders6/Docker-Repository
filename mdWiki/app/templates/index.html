@@ -9,6 +9,7 @@
   <form class="search-form" method="get" action="/">
     {% if class_filter %}<input type="hidden" name="class_filter" value="{{ class_filter }}">{% endif %}
     {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+    {% if notebook %}<input type="hidden" name="notebook" value="{{ notebook }}">{% endif %}
     <input type="text" name="q" value="{{ q }}" placeholder="Search notes..." class="search-input" autofocus>
     {% if q %}<a href="/" class="btn">Clear</a>{% endif %}
   </form>
@@ -16,6 +17,13 @@
 
 <div class="layout">
   <aside class="sidebar">
+    <div class="sidebar-heading"><h3>Notebooks</h3><a href="/notebooks/new" title="New notebook">+</a></div>
+    <ul class="filter-list notebook-list">
+      <li><a href="/" class="{{ 'active' if not notebook }}">All notes <span class="count">{{ total_notes }}</span></a></li>
+      {% for name in notebooks %}
+        <li><a href="/?notebook={{ name }}" class="{{ 'active' if notebook == name }}">📓 {{ name }}</a></li>
+      {% endfor %}
+    </ul>
     <h3>Classes</h3>
     <ul class="filter-list">
       <li><a href="/" class="{{ 'active' if not class_filter }}">All <span class="count">{{ total_notes }}</span></a></li>
@@ -58,6 +66,8 @@
       <a class="note-card" href="/note/{{ n.slug }}">
         <div class="note-card-title">{{ n.title }}</div>
         <div class="note-card-meta">
+          {% if n.notebook %}<span class="date">📓 {{ n.notebook }}</span>{% endif %}
+          {% if n.parent %}<span class="date">↳ sub note</span>{% endif %}
           {% if n.class %}<span class="badge">{{ n.class }}</span>{% endif %}
           <span class="date">{{ n.mtime | dt }}</span>
           {% for t in n.tags %}<span class="tag">#{{ t }}</span>{% endfor %}

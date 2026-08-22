@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}New Notebook{% endblock %}
+{% block content %}
+<form class="new-form" method="post" action="/notebooks/new">
+  <h2>New Notebook</h2>
+  {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+  <label>Name
+    <input type="text" name="name" placeholder="e.g. homelab" required autofocus>
+  </label>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Create Notebook</button>
+    <a class="btn" href="/">Cancel</a>
+  </div>
+</form>
+{% endblock %}

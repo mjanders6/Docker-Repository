@@ -32,7 +32,6 @@ a:hover { text-decoration: underline; }
   background: var(--bg-alt);
 }
 .brand { font-weight: 600; font-size: 1.1em; color: var(--text); display: inline-flex; align-items: baseline; gap: 8px; }
-.version-tag { font-size: 0.65em; font-weight: 400; color: var(--text-dim); }
 .new-btn {
   background: var(--accent);
   color: #fff;
@@ -42,10 +41,14 @@ a:hover { text-decoration: underline; }
 .new-btn:hover { text-decoration: none; opacity: 0.9; }
 
 .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+.site-footer { max-width: 1000px; margin: 24px auto 0; padding: 16px 24px 24px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8em; }
 
 .layout { display: flex; gap: 32px; }
 .sidebar { width: 180px; flex-shrink: 0; }
 .sidebar h3 { font-size: 0.85em; text-transform: uppercase; color: var(--text-dim); }
+.sidebar-heading { display: flex; align-items: center; justify-content: space-between; }
+.sidebar-heading h3 { margin-bottom: 8px; }
+.sidebar-heading a { font-size: 1.2em; }
 .filter-list { list-style: none; padding: 0; margin: 0; }
 .filter-list li { margin-bottom: 4px; }
 .filter-list a { display: block; padding: 4px 8px; border-radius: 6px; color: var(--text-dim); }
@@ -87,6 +90,10 @@ a:hover { text-decoration: underline; }
 .note-body pre { background: var(--bg-alt); padding: 12px; border-radius: var(--radius); overflow-x: auto; }
 .note-body code { background: var(--bg-alt); padding: 2px 4px; border-radius: 4px; }
 .note-body blockquote { border-left: 3px solid var(--accent-dim); margin-left: 0; padding-left: 12px; color: var(--text-dim); }
+.child-notes { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px; }
+.child-notes h2 { font-size: 1em; color: var(--text-dim); }
+.child-note { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); color: var(--text); }
+.child-note span { color: var(--text-dim); font-size: 0.85em; }
 
 /* --- embedded ```query``` / ```sql``` blocks --- */
 .query-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }

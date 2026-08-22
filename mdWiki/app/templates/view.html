@@ -5,6 +5,7 @@
   <div class="note-header">
     <h1>{{ note.metadata.title }}</h1>
     <div class="note-actions">
+      <a class="btn" href="/new?notebook={{ note.metadata.notebook or '' }}&parent={{ note.slug }}">+ Sub-note</a>
       <a class="btn" href="/note/{{ note.slug }}/edit">Edit</a>
       <form method="post" action="/note/{{ note.slug }}/delete"
             onsubmit="return confirm('Delete this note?');" style="display:inline">
@@ -49,6 +50,18 @@
   <div class="note-body">
     {{ html | safe }}
   </div>
+
+  {% if children %}
+  <section class="child-notes">
+    <h2>Sub-notes</h2>
+    {% for child in children %}
+      <a class="child-note" href="/note/{{ child.slug }}">
+        <strong>{{ child.title }}</strong>
+        <span>{{ child.mtime | dt }}</span>
+      </a>
+    {% endfor %}
+  </section>
+  {% endif %}
 </article>
 
 <script>

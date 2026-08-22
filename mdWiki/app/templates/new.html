@@ -16,6 +16,18 @@
       {% endfor %}
     </select>
   </label>
+  <label>Notebook
+    <select name="notebook">
+      <option value="">(loose note)</option>
+      {% for notebook_name in notebooks %}<option value="{{ notebook_name }}" {{ 'selected' if notebook_name == notebook }}>📓 {{ notebook_name }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Parent note (optional)
+    <select name="parent">
+      <option value="">(top-level note)</option>
+      {% for n in all_notes %}<option value="{{ n.slug }}" {{ 'selected' if n.slug == parent }}>{{ n.title }}</option>{% endfor %}
+    </select>
+  </label>
   <div class="form-actions">
     <button class="btn btn-primary" type="submit">Create</button>
     <a class="btn" href="/">Cancel</a>

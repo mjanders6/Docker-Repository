@@ -86,7 +86,7 @@ def help_page(request: Request):
 
 
 @app.get("/", response_class=HTMLResponse)
-def index(request: Request, class_filter: str = "", tag: str = "", q: str = ""):
+def index(request: Request, class_filter: str = "", tag: str = "", q: str = "", notebook: str = ""):
     notes = store.list_notes()
     if class_filter:
         notes = [n for n in notes if n["class"] == class_filter]
@@ -100,6 +100,8 @@ def index(request: Request, class_filter: str = "", tag: str = "", q: str = ""):
             or needle in n["slug"].lower()
             or any(needle in t.lower() for t in n["tags"])
         ]
+    if notebook:
+        notes = [n for n in notes if n.get("notebook", "") == notebook]
     notes.sort(key=lambda n: n["mtime"], reverse=True)
 
     classes = store.list_classes()
@@ -110,6 +112,7 @@ def index(request: Request, class_filter: str = "", tag: str = "", q: str = ""):
         "request": request, "notes": notes, "classes": classes,
         "class_counts": class_counts, "all_tags": all_tags,
         "class_filter": class_filter, "tag": tag, "q": q,
+        "notebooks": store.list_notebooks(), "notebook": notebook,
         "total_notes": len(store.list_notes()),
     })
 
@@ -125,6 +128,7 @@ def edit_note_form(request: Request, slug: str):
     return templates.TemplateResponse("edit.html", {
         "request": request, "note": note, "cls": cls, "classes": classes,
         "values": note["metadata"], "all_notes": all_notes,
+        "notebooks": store.list_notebooks(),
     })
 
 
@@ -147,8 +151,15 @@ async def save_note_submit(slug: str, request: Request):
     tags = [t.strip() for t in form.get("tags", "").split(",") if t.strip()]
     date_val = form.get("date", "")
     body = form.get("body", "")
+    notebook = (form.get("notebook", "") or "").strip()
+    parent = (form.get("parent", "") or "").strip()
+    if notebook and notebook not in store.list_notebooks():
+        return HTMLResponse("Notebook not found", status_code=400)
+    if parent and not store.get_note(parent):
+        return HTMLResponse("Parent note not found", status_code=400)
 
-    metadata = {"title": title, "class": class_name, "tags": tags, "date": date_val}
+    metadata = {"title": title, "class": class_name, "tags": tags, "date": date_val,
+                "notebook": notebook, "parent": parent}
     cls = store.get_class(class_name)
     if cls:
         for field in cls.get("fields", []):
@@ -213,17 +224,43 @@ def view_note(request: Request, slug: str):
         return HTMLResponse(f"Note '{slug}' not found", status_code=404)
     cls = store.get_class(note["metadata"].get("class", ""))
     html = render_markdown(note["body"])
+    children = [n for n in store.list_notes() if n.get("parent") == slug]
     return templates.TemplateResponse("view.html", {
         "request": request, "note": note, "html": html, "cls": cls,
+        "children": children,
     })
 
 
 @app.get("/new", response_class=HTMLResponse)
-def new_note_form(request: Request, class_name: str = ""):
+def new_note_form(request: Request, class_name: str = "", notebook: str = "", parent: str = ""):
     classes = store.list_classes()
     return templates.TemplateResponse("new.html", {
         "request": request, "classes": classes, "class_name": class_name,
+        "notebooks": store.list_notebooks(), "all_notes": store.list_notes(),
+        "notebook": notebook, "parent": parent,
     })
+
+
+@app.get("/notebooks/new", response_class=HTMLResponse)
+def new_notebook_form(request: Request):
+    return templates.TemplateResponse("notebook_form.html", {"request": request, "error": None})
+
+
+@app.post("/notebooks/new")
+async def create_notebook_submit(request: Request):
+    form = await request.form()
+    raw_name = form.get("name", "")
+    name = store.notebook_slugify(raw_name)
+    if not name:
+        return templates.TemplateResponse("notebook_form.html", {
+            "request": request, "error": "Notebook name must contain letters, numbers, - or _."
+        }, status_code=400)
+    if name in store.list_notebooks():
+        return templates.TemplateResponse("notebook_form.html", {
+            "request": request, "error": f"A notebook named '{name}' already exists."
+        }, status_code=400)
+    store.create_notebook(name)
+    return RedirectResponse(f"/?notebook={name}", status_code=303)
 
 
 @app.post("/new")
@@ -231,7 +268,15 @@ async def create_note(request: Request):
     form = await request.form()
     title = form.get("title", "Untitled")
     class_name = form.get("class", "")
+    notebook = store.notebook_slugify(form.get("notebook", ""))
+    parent = (form.get("parent", "") or "").strip()
+    if notebook and notebook not in store.list_notebooks():
+        return HTMLResponse("Notebook not found", status_code=400)
+    if parent and not store.get_note(parent):
+        return HTMLResponse("Parent note not found", status_code=400)
     slug = store.slugify(title)
+    if notebook:
+        slug = f"{notebook}/{slug}"
 
     if store.get_note(slug):
         i = 2
@@ -240,6 +285,8 @@ async def create_note(request: Request):
         slug = f"{slug}-{i}"
 
     metadata, body = store.new_note_defaults(class_name, title)
+    metadata["notebook"] = notebook
+    metadata["parent"] = parent
     store.save_note(slug, metadata, body)
     return RedirectResponse(f"/note/{slug}/edit", status_code=303)
 

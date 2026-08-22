@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/">📓 {{ app_name }}<span class="version-tag">v{{ app_version }}</span></a>
+    <a class="brand" href="/">📓 {{ app_name }}</a>
     <nav class="topnav">
       <a href="/" class="{{ 'active' if request.url.path == '/' }}">Notes</a>
       <a href="/classes" class="{{ 'active' if request.url.path.startswith('/classes') }}">Classes</a>
@@ -19,5 +19,6 @@
   <main class="container">
     {% block content %}{% endblock %}
   </main>
+  <footer class="site-footer">{{ app_name }} v{{ app_version }}</footer>
 </body>
 </html>

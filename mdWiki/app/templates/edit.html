@@ -25,6 +25,18 @@
     <label>Tags (comma separated)
       <input type="text" name="tags" value="{{ (note.metadata.tags or []) | join(', ') }}">
     </label>
+    <label>Notebook
+      <select name="notebook">
+        <option value="">(loose note)</option>
+        {% for notebook in notebooks %}<option value="{{ notebook }}" {{ 'selected' if notebook == note.metadata.notebook }}>📓 {{ notebook }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Parent note (optional)
+      <select name="parent">
+        <option value="">(top-level note)</option>
+        {% for n in all_notes %}<option value="{{ n.slug }}" {{ 'selected' if n.slug == note.metadata.parent }}>{{ n.title }}</option>{% endfor %}
+      </select>
+    </label>
   </div>
 
   <div class="edit-class-fields" id="class-fields-container">

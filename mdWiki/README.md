@@ -1,6 +1,6 @@
 # mdWiki
 
-**Version:** 2.3.0
+**Version:** 3.0.0
 
 A minimal, self-hosted, Docker-based markdown wiki. No database, no
 third-party service, no telemetry — just `.md` files with YAML frontmatter
@@ -9,6 +9,9 @@ server-side.
 
 ## How it works
 
+- **Notebooks** are persistent top-level folders under `data/notes/`. Create
+  notes inside a notebook and optionally select another note as their parent;
+  the `notebook` and `parent` frontmatter fields preserve that hierarchy.
 - **Notes** live under `data/notes/` as plain `.md` files with YAML
   frontmatter at the top (title, class, tags, date, plus any fields defined
   by the note's class). Subfolders are supported (e.g. `data/notes/homelab/mcp-gateway.md`).

@@ -55,6 +55,11 @@ def slugify(text: str) -> str:
     return SLUG_RE.sub("", text) or "note"
 
 
+def notebook_slugify(text: str) -> str:
+    """Create a safe single-segment notebook name."""
+    return re.sub(r"[^a-z0-9_-]+", "", (text or "").lower().strip().replace(" ", "-"))
+
+
 def slugify_class_name(text: str) -> str:
     text = (text or "").lower().strip().replace(" ", "-")
     return CLASS_NAME_RE.sub("", text)
@@ -125,6 +130,23 @@ def delete_class(name: str) -> bool:
 
 # ---------- Notes (.md files with YAML frontmatter) ----------
 
+def list_notebooks() -> list[str]:
+    """Return persistent top-level notebook directories."""
+    if not NOTES_DIR.exists():
+        return []
+    return sorted(path.name for path in NOTES_DIR.iterdir() if path.is_dir() and not path.name.startswith("."))
+
+
+def create_notebook(name: str) -> bool:
+    name = notebook_slugify(name)
+    if not name:
+        return False
+    path = (NOTES_DIR / name).resolve()
+    if not _is_safe(path):
+        return False
+    path.mkdir(parents=True, exist_ok=False)
+    return True
+
 def _note_path(slug: str) -> Path:
     # notes may live in subfolders; slug can contain "/"
     return (NOTES_DIR / f"{slug}.md").resolve()
@@ -155,6 +177,8 @@ def list_notes() -> list[dict]:
             "class": post.metadata.get("class", ""),
             "tags": post.metadata.get("tags", []) or [],
             "date": post.metadata.get("date", ""),
+            "notebook": post.metadata.get("notebook", ""),
+            "parent": post.metadata.get("parent", ""),
             "mtime": path.stat().st_mtime,
         })
     return notes
@@ -202,6 +226,8 @@ def new_note_defaults(class_name: str, title: str) -> tuple[dict, str]:
         "class": class_name or "",
         "tags": [],
         "date": date.today().isoformat(),
+        "notebook": "",
+        "parent": "",
     }
     body = ""
     if cls:
