@@ -181,7 +181,9 @@
         const checkbox = option.querySelector('.multiselect-checkbox');
         checkbox.addEventListener('change', () => {
           updateMultiselectDisplay(wrapper);
+          dropdown.style.display = 'flex';
         });
+        option.addEventListener('click', (e) => e.stopPropagation());
       });
 
       // Remove tag

@@ -4,6 +4,7 @@ definitions from disk. No database -- the filesystem is the source of truth.
 """
 import os
 import re
+import shutil
 from datetime import date
 from pathlib import Path
 
@@ -145,6 +146,17 @@ def create_notebook(name: str) -> bool:
     if not _is_safe(path):
         return False
     path.mkdir(parents=True, exist_ok=False)
+    return True
+
+
+def delete_notebook(name: str) -> bool:
+    """Remove a top-level notebook and all notes stored inside it."""
+    if not name or notebook_slugify(name) != name:
+        return False
+    path = (NOTES_DIR / name).resolve()
+    if not _is_safe(path) or not path.is_dir():
+        return False
+    shutil.rmtree(path)
     return True
 
 def _note_path(slug: str) -> Path:

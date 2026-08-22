@@ -263,6 +263,13 @@ async def create_notebook_submit(request: Request):
     return RedirectResponse(f"/?notebook={name}", status_code=303)
 
 
+@app.post("/notebooks/{name}/delete")
+def delete_notebook_route(name: str):
+    if not store.delete_notebook(name):
+        return HTMLResponse("Notebook not found", status_code=404)
+    return RedirectResponse("/", status_code=303)
+
+
 @app.post("/new")
 async def create_note(request: Request):
     form = await request.form()

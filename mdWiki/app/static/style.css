@@ -51,6 +51,11 @@ a:hover { text-decoration: underline; }
 .sidebar-heading a { font-size: 1.2em; }
 .filter-list { list-style: none; padding: 0; margin: 0; }
 .filter-list li { margin-bottom: 4px; }
+.notebook-item { display: flex; align-items: center; gap: 4px; }
+.notebook-item a { flex: 1; }
+.notebook-item form { margin: 0; }
+.notebook-delete { padding: 0 5px; border: 0; background: none; color: var(--text-dim); cursor: pointer; font-size: 1.1em; }
+.notebook-delete:hover { color: var(--danger); }
 .filter-list a { display: block; padding: 4px 8px; border-radius: 6px; color: var(--text-dim); }
 .filter-list a.active, .filter-list a:hover { background: var(--bg-alt); color: var(--text); text-decoration: none; }
 
