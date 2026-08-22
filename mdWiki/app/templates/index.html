@@ -25,7 +25,7 @@
           <a href="/?notebook={{ name }}" class="{{ 'active' if notebook == name }}">📓 {{ name }}</a>
           <form method="post" action="/notebooks/{{ name }}/delete"
                 onsubmit="return confirm('Delete notebook &quot;{{ name }}&quot; and all notes inside it?');">
-            <button class="notebook-delete" type="submit" title="Delete notebook" aria-label="Delete notebook {{ name }}">&times;</button>
+            <button class="notebook-delete" type="submit" title="Delete notebook" aria-label="Delete notebook {{ name }}">&#128465;</button>
           </form>
         </li>
       {% endfor %}
