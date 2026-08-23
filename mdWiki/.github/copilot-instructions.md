@@ -2,13 +2,29 @@
 
 ## Core Purpose
 mdWiki is a minimal, self-hosted, Docker-based markdown wiki. Everything is
-flat files — no database, no third-party services, no telemetry. FastAPI +
-Jinja2 render server-side. Full data ownership and portability are the point.
+flat files on disk — no persistent database, no third-party services, no
+telemetry. FastAPI + Jinja2 render server-side. Full data ownership and
+portability are the point.
 
 ## Architecture (source of truth — do not assume otherwise)
 * **Storage:** plain `.md` files with YAML frontmatter under `data/notes/`,
-  plain `.yml` class definitions under `data/classes/`. No database of any
-  kind. Do not introduce PostgreSQL, SQLite, or an ORM.
+  plain `.yml` class definitions under `data/classes/`. This is the only
+  persistent store. Do not introduce PostgreSQL or an ORM, and do not make
+  the query engine below (or any other SQLite use) persistent — see
+  **Embedded queries**.
+* **Embedded queries:** notes can contain fenced ```query``` or ```sql```
+  code blocks, rendered as a results table wherever they appear (view page
+  and edit-page preview). Both run against an **in-memory SQLite database
+  rebuilt from the flat files on every render** — never written to disk,
+  connection is read-only (`PRAGMA query_only`), only `SELECT` is permitted
+  for `sql` blocks. `query` blocks are a simple `key: value` mini-language
+  (`class`, `tag`, `contains`, `sort`, `limit`, `columns`); `contains` does
+  a case-insensitive search across a note's title **and full body**. `sql`
+  blocks query a `notes` table exposing `slug`, `title`, `class`, `tags`,
+  `date`, `body`, plus every class's custom fields. This is why "no
+  database" above means no *persistent* one — the in-memory SQLite layer
+  is intentional and existing; don't treat it as something to remove, and
+  don't make it write-capable or persist it to disk.
 * **Auth:** none, intentionally. Access control is expected to be handled
   by a reverse proxy or VPN in front of the app, not by mdWiki itself.
 * **Collaboration/history:** none built in. If versioning is needed, the
@@ -35,22 +51,28 @@ Jinja2 render server-side. Full data ownership and portability are the point.
 * Notebook hierarchy via folders and parent/child note links.
 * Wikilink resolution and link-first-write-later note creation.
 * Inline task-list checkboxes, saved instantly from the view or editor.
+* Embedded `query`/`sql` blocks in notes, including full-text search of
+  note bodies via `contains:` — see **Embedded queries** above.
 
 ## Explicitly Out of Scope (do not add without being asked)
 * Any form of user authentication or login (GitHub OAuth, etc.)
 * Real-time collaborative editing
-* A database of any kind
+* A *persistent* database of any kind (Postgres, a written-to-disk SQLite
+  file, etc.) — the existing in-memory, rebuilt-per-render SQLite used for
+  embedded queries is not this; see **Embedded queries** above.
 * In-app version history (git in `data/` covers this)
 * Role-based access control
-* Full-text search, backlinks panel, image/file uploads — these are
-  acknowledged "phase 2" ideas in the README, not current requirements.
-  Don't implement them speculatively; ask first.
+* A backlinks panel, image/file uploads — acknowledged "phase 2" ideas in
+  the README, not current requirements. Don't implement them
+  speculatively; ask first.
 
 ## Tech Stack
 * Python, FastAPI, Jinja2 (server-side rendering)
 * Docker / docker-compose for packaging and running
 * Flat-file storage: `.md` (notes) + `.yml` (classes), bind-mounted for
   persistence
+* SQLite, in-memory only, rebuilt per render, powering embedded
+  `query`/`sql` blocks — not a persistence layer
 
 ## Working Style
 * Don't restate these instructions or summarize what you're about to do

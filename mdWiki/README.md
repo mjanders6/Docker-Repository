@@ -2,10 +2,12 @@
 
 **Version:** 3.1.1
 
-A minimal, self-hosted, Docker-based markdown wiki. No database, no
-third-party service, no telemetry — just `.md` files with YAML frontmatter
-and `.yml` class definitions on disk. FastAPI + Jinja2 render everything
-server-side.
+A minimal, self-hosted, Docker-based markdown wiki. No persistent database,
+no third-party service, no telemetry — just `.md` files with YAML
+frontmatter and `.yml` class definitions on disk. FastAPI + Jinja2 render
+everything server-side. An in-memory SQLite layer, rebuilt from those files
+on every render, powers embedded queries within notes (see below) but is
+never written to disk.
 
 ## How it works
 
@@ -49,6 +51,16 @@ will pick up changes on next page load.
   rest of your edits.
 - **Cancel** -- the note editor and both class forms have a Cancel button
   that backs out without saving changes.
+- **Embedded queries** -- a fenced ```query``` or ```sql``` code block
+  anywhere in a note's body renders as a live results table (on the view
+  page and in the editor's preview pane). `query` blocks use a simple
+  `key: value` syntax (`class`, `tag`, `contains`, `sort`, `limit`,
+  `columns`); `sql` blocks run read-only `SELECT` statements against a
+  `notes` table exposing every note's `slug`, `title`, `class`, `tags`,
+  `date`, `body`, and custom class fields. Both run against an in-memory
+  SQLite database rebuilt from the flat files on every render -- nothing
+  is ever written to disk, and only `SELECT` is permitted. `contains:`
+  doubles as full-text search across a note's title and body.
 
 ## Running it
 
@@ -111,13 +123,13 @@ sidebar filter — no code changes needed.
 
 - No auth/login (put it behind your reverse proxy / VPN, e.g. what you're
   likely already using for other homelab services)
-- No full-text search (can add a simple filename/content grep-based search
-  next)
 - No backlinks panel (wikilinks resolve and render, but nothing shows
   "notes that link here" yet — would need a body scan across all notes)
 - No image/file uploads (attach via a `static/uploads` mount + `<img>` in
   markdown for now)
 - No live-collaboration or version history (git in the data dir handles
   this if you want it)
+- No persistent database — the in-memory SQLite used for embedded queries
+  is rebuilt from the flat files on every render and never touches disk
 
 All of these are natural "phase 2" additions once the core is solid.
