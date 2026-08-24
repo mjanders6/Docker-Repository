@@ -108,13 +108,17 @@ def index(request: Request, class_filter: str = "", tag: str = "", q: str = "", 
     classes = store.list_classes()
     class_counts = {c["name"]: store.count_notes_by_class(c["name"]) for c in classes}
     all_tags = store.list_all_tags()
+    all_notes = store.list_notes()
+    notebook_counts = {name: sum(1 for note in all_notes if note["notebook"] == name)
+                       for name in store.list_notebooks()}
 
     return templates.TemplateResponse("index.html", {
         "request": request, "notes": notes, "classes": classes,
         "class_counts": class_counts, "all_tags": all_tags,
         "class_filter": class_filter, "tag": tag, "q": q,
         "notebooks": store.list_notebooks(), "notebook": notebook,
-        "total_notes": len(store.list_notes()),
+        "notebook_counts": notebook_counts,
+        "total_notes": len(all_notes),
     })
 
 

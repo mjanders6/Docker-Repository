@@ -1,9 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Notes{% endblock %}
+{% block title %}{{ 'Notebooks' if not notebook else ('Unfiled' if notebook == 'unfiled' else notebook) }}{% endblock %}
 {% block content %}
+{% if not notebook %}
+<div class="home-hero landing-hero">
+  <div>
+    <h1>Notebooks</h1>
+    <p class="home-sub">Choose a notebook to browse its notes.</p>
+  </div>
+  <a class="btn btn-primary" href="/notebooks/new">+ New notebook</a>
+</div>
+
+<section class="notebook-cards" aria-label="Notebooks">
+  {% for name in notebooks %}
+    <a class="notebook-card" href="/?notebook={{ name }}">
+      <span class="notebook-card-icon">📓</span>
+      <span class="notebook-card-content">
+        <strong>{{ 'Unfiled' if name == 'unfiled' else name }}</strong>
+        <span>{{ notebook_counts.get(name, 0) }} note{{ '' if notebook_counts.get(name, 0) == 1 else 's' }}</span>
+      </span>
+      <span class="notebook-card-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+  {% endfor %}
+</section>
+{% else %}
 <div class="home-hero">
   <div>
-    <h1>Notes</h1>
+    <h1>{{ 'Unfiled' if notebook == 'unfiled' else notebook }}</h1>
     <p class="home-sub">{{ total_notes }} note{{ '' if total_notes == 1 else 's' }}{% if class_filter or tag or q %} &middot; filtered{% endif %}</p>
   </div>
   <form class="search-form" method="get" action="/">
@@ -82,4 +104,5 @@
     {% endfor %}
   </section>
 </div>
+{% endif %}
 {% endblock %}

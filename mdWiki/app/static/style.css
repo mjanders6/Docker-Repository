@@ -323,6 +323,14 @@ input[type=text], input[type=date], select {
 .home-hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
 .home-hero h1 { margin: 0 0 4px; font-size: 1.6em; }
 .home-sub { margin: 0; color: var(--text-dim); font-size: 0.9em; }
+.landing-hero { align-items: center; margin-bottom: 24px; }
+.notebook-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.notebook-card { display: flex; align-items: center; gap: 12px; min-height: 112px; padding: 18px; background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); }
+.notebook-card:hover { border-color: var(--accent); text-decoration: none; transform: translateY(-2px); }
+.notebook-card-icon { font-size: 1.8em; }
+.notebook-card-content { display: flex; flex: 1; flex-direction: column; gap: 3px; }
+.notebook-card-content span { color: var(--text-dim); font-size: 0.85em; }
+.notebook-card-arrow { color: var(--accent); font-size: 1.2em; }
 .search-form { display: flex; gap: 8px; align-items: center; }
 .search-input {
   width: 260px; padding: 8px 12px; background: var(--bg-alt); border: 1px solid var(--border);
