@@ -27,8 +27,7 @@
     </label>
     <label>Notebook
       <select name="notebook">
-        <option value="">(loose note)</option>
-        {% for notebook in notebooks %}<option value="{{ notebook }}" {{ 'selected' if notebook == note.metadata.notebook }}>📓 {{ notebook }}</option>{% endfor %}
+        {% for notebook in notebooks %}<option value="{{ notebook }}" {{ 'selected' if notebook == (note.metadata.notebook or 'unfiled') }}>📓 {{ 'Unfiled' if notebook == 'unfiled' else notebook }}</option>{% endfor %}
       </select>
     </label>
     <label>Parent note (optional)
@@ -71,6 +70,7 @@
       body: 'body=' + encodeURIComponent(textarea.value),
     });
     preview.innerHTML = await res.text();
+    addCodeCopyButtons(preview);
   }
 
   textarea.addEventListener('input', () => {

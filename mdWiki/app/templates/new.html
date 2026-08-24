@@ -18,8 +18,7 @@
   </label>
   <label>Notebook
     <select name="notebook">
-      <option value="">(loose note)</option>
-      {% for notebook_name in notebooks %}<option value="{{ notebook_name }}" {{ 'selected' if notebook_name == notebook }}>📓 {{ notebook_name }}</option>{% endfor %}
+      {% for notebook_name in notebooks %}<option value="{{ notebook_name }}" {{ 'selected' if notebook_name == (notebook or 'unfiled') }}>📓 {{ 'Unfiled' if notebook_name == 'unfiled' else notebook_name }}</option>{% endfor %}
     </select>
   </label>
   <label>Parent note (optional)

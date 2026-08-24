@@ -24,6 +24,7 @@ CLASS_NAME_RE = re.compile(r"[^a-z0-9_\-]+")
 # their previous untyped behavior.
 FIELD_TYPES = ["text", "textarea", "number", "date", "checkbox", "url", "multiselect"]
 DEFAULT_FIELD_TYPE = "text"
+DEFAULT_NOTEBOOK = "unfiled"
 
 
 def _normalize_fields(fields: list[dict] | None) -> list[dict]:
@@ -59,6 +60,11 @@ def slugify(text: str) -> str:
 def notebook_slugify(text: str) -> str:
     """Create a safe single-segment notebook name."""
     return re.sub(r"[^a-z0-9_-]+", "", (text or "").lower().strip().replace(" ", "-"))
+
+
+def notebook_name(value: str | None) -> str:
+    """Return the canonical notebook for stored or legacy note metadata."""
+    return notebook_slugify(value or "") or DEFAULT_NOTEBOOK
 
 
 def slugify_class_name(text: str) -> str:
@@ -132,10 +138,13 @@ def delete_class(name: str) -> bool:
 # ---------- Notes (.md files with YAML frontmatter) ----------
 
 def list_notebooks() -> list[str]:
-    """Return persistent top-level notebook directories."""
+    """Return top-level notebooks, including the virtual default notebook."""
     if not NOTES_DIR.exists():
-        return []
-    return sorted(path.name for path in NOTES_DIR.iterdir() if path.is_dir() and not path.name.startswith("."))
+        return [DEFAULT_NOTEBOOK]
+    notebooks = {path.name for path in NOTES_DIR.iterdir()
+                 if path.is_dir() and not path.name.startswith(".")}
+    notebooks.add(DEFAULT_NOTEBOOK)
+    return sorted(notebooks)
 
 
 def create_notebook(name: str) -> bool:
@@ -151,7 +160,7 @@ def create_notebook(name: str) -> bool:
 
 def delete_notebook(name: str) -> bool:
     """Remove a top-level notebook and all notes stored inside it."""
-    if not name or notebook_slugify(name) != name:
+    if not name or notebook_slugify(name) != name or name == DEFAULT_NOTEBOOK:
         return False
     path = (NOTES_DIR / name).resolve()
     if not _is_safe(path) or not path.is_dir():
@@ -189,7 +198,7 @@ def list_notes() -> list[dict]:
             "class": post.metadata.get("class", ""),
             "tags": post.metadata.get("tags", []) or [],
             "date": post.metadata.get("date", ""),
-            "notebook": post.metadata.get("notebook", ""),
+            "notebook": notebook_name(post.metadata.get("notebook", "")),
             "parent": post.metadata.get("parent", ""),
             "mtime": path.stat().st_mtime,
         })
@@ -238,7 +247,7 @@ def new_note_defaults(class_name: str, title: str) -> tuple[dict, str]:
         "class": class_name or "",
         "tags": [],
         "date": date.today().isoformat(),
-        "notebook": "",
+        "notebook": DEFAULT_NOTEBOOK,
         "parent": "",
     }
     body = ""

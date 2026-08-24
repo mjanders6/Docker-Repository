@@ -101,7 +101,8 @@ def index(request: Request, class_filter: str = "", tag: str = "", q: str = "", 
             or any(needle in t.lower() for t in n["tags"])
         ]
     if notebook:
-        notes = [n for n in notes if n.get("notebook", "") == notebook]
+        notebook = store.notebook_name(notebook)
+        notes = [n for n in notes if n["notebook"] == notebook]
     notes.sort(key=lambda n: n["mtime"], reverse=True)
 
     classes = store.list_classes()
@@ -151,9 +152,9 @@ async def save_note_submit(slug: str, request: Request):
     tags = [t.strip() for t in form.get("tags", "").split(",") if t.strip()]
     date_val = form.get("date", "")
     body = form.get("body", "")
-    notebook = (form.get("notebook", "") or "").strip()
+    notebook = store.notebook_name(form.get("notebook", ""))
     parent = (form.get("parent", "") or "").strip()
-    if notebook and notebook not in store.list_notebooks():
+    if notebook not in store.list_notebooks():
         return HTMLResponse("Notebook not found", status_code=400)
     if parent and not store.get_note(parent):
         return HTMLResponse("Parent note not found", status_code=400)
@@ -275,9 +276,9 @@ async def create_note(request: Request):
     form = await request.form()
     title = form.get("title", "Untitled")
     class_name = form.get("class", "")
-    notebook = store.notebook_slugify(form.get("notebook", ""))
+    notebook = store.notebook_name(form.get("notebook", ""))
     parent = (form.get("parent", "") or "").strip()
-    if notebook and notebook not in store.list_notebooks():
+    if notebook not in store.list_notebooks():
         return HTMLResponse("Notebook not found", status_code=400)
     if parent and not store.get_note(parent):
         return HTMLResponse("Parent note not found", status_code=400)

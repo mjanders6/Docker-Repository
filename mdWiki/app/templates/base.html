@@ -4,21 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
-  <link rel="stylesheet" href="/static/style.css?v=3.1.1">
+  <link rel="stylesheet" href="/static/style.css?v=3.2.0">
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="/">📓 {{ app_name }}</a>
     <nav class="topnav">
-      <a href="/" class="{{ 'active' if request.url.path == '/' }}">Notes</a>
-      <a href="/classes" class="{{ 'active' if request.url.path.startswith('/classes') }}">Classes</a>
-      <a href="/help" class="{{ 'active' if request.url.path == '/help' }}">Help</a>
-      <a class="new-btn" href="/new">+ New Note</a>
+      <details class="nav-menu">
+        <summary>Navigate</summary>
+        <div class="nav-menu-items">
+          <a href="/" class="{{ 'active' if request.url.path == '/' }}">Notes</a>
+          <a href="/classes" class="{{ 'active' if request.url.path.startswith('/classes') }}">Classes</a>
+          <a href="/help" class="{{ 'active' if request.url.path == '/help' }}">Help</a>
+          <a class="new-btn" href="/new">+ New Note</a>
+        </div>
+      </details>
     </nav>
   </header>
   <main class="container">
     {% block content %}{% endblock %}
   </main>
   <footer class="site-footer">{{ app_name }} v{{ app_version }}</footer>
+  <script>
+    document.addEventListener('click', async (event) => {
+      const button = event.target.closest('.copy-code');
+      if (!button) return;
+      const code = button.closest('pre')?.querySelector('code');
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        button.textContent = 'Copied';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      } catch (error) {
+        button.textContent = 'Copy failed';
+      }
+    });
+
+    function addCodeCopyButtons(root = document) {
+      root.querySelectorAll('pre').forEach((block) => {
+        if (block.querySelector('.copy-code')) return;
+        const button = document.createElement('button');
+        button.className = 'copy-code';
+        button.type = 'button';
+        button.textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code block');
+        block.appendChild(button);
+      });
+    }
+
+    addCodeCopyButtons();
+  </script>
 </body>
 </html>

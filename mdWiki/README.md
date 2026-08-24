@@ -1,6 +1,6 @@
 # mdWiki
 
-**Version:** 3.1.1
+**Version:** 3.2.0
 
 A minimal, self-hosted, Docker-based markdown wiki. No persistent database,
 no third-party service, no telemetry — just `.md` files with YAML
