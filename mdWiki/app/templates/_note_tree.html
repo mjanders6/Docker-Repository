@@ -1,0 +1,16 @@
+{% macro render_note_tree(nodes, active_slug='') %}
+  <ul class="note-tree">
+    {% for n in nodes %}
+      <li class="note-tree-item">
+        <a class="note-card{{ ' active' if n.slug == active_slug else '' }}" href="/note/{{ n.slug }}">
+          <div class="note-card-title">{{ n.title }}</div>
+          <div class="note-card-meta">
+            {% if n.class %}<span class="badge">{{ n.class }}</span>{% endif %}
+            {% for t in n.tags %}<span class="tag">#{{ t }}</span>{% endfor %}
+          </div>
+        </a>
+        {% if n.children %}{{ render_note_tree(n.children, active_slug) }}{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}

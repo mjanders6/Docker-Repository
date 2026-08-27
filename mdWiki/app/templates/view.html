@@ -1,6 +1,14 @@
+{% import "_note_tree.html" as tree %}
 {% extends "base.html" %}
 {% block title %}{{ note.metadata.title }}{% endblock %}
 {% block content %}
+<div class="layout">
+  <aside class="sidebar note-tree-sidebar">
+    <div class="sidebar-heading"><h3>Notes</h3><a href="/new?notebook={{ note.metadata.notebook or '' }}" title="New note">+</a></div>
+    {{ tree.render_note_tree(note_tree, note.slug) }}
+  </aside>
+
+  <section class="note-detail-pane">
 <article class="note-view">
   <div class="note-header">
     <h1>{{ note.metadata.title }}</h1>
@@ -63,6 +71,8 @@
   </section>
   {% endif %}
 </article>
+  </section>
+</div>
 
 <script>
   // Task-list checkboxes are live here (not disabled) -- clicking one

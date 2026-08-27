@@ -233,9 +233,12 @@ def view_note(request: Request, slug: str):
     cls = store.get_class(note["metadata"].get("class", ""))
     html = render_markdown(note["body"])
     children = [n for n in store.list_notes() if n.get("parent") == slug]
+    notebook = store.notebook_name(note["metadata"].get("notebook", ""))
+    notebook_notes = [n for n in store.list_notes() if n["notebook"] == notebook]
+    note_tree = store.build_note_tree(notebook_notes)
     return templates.TemplateResponse("view.html", {
         "request": request, "note": note, "html": html, "cls": cls,
-        "children": children,
+        "children": children, "note_tree": note_tree,
     })
 
 
