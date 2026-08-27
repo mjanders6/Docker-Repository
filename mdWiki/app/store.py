@@ -205,6 +205,26 @@ def list_notes() -> list[dict]:
     return notes
 
 
+def build_note_tree(notes: list[dict]) -> list[dict]:
+    """Arrange a flat list of notes into a parent/child tree using each
+    note's `parent` slug. A note whose parent isn't present in the given
+    list (e.g. filtered out, or in another notebook) is treated as
+    top-level rather than dropped."""
+    by_slug = {n["slug"]: {**n, "children": []} for n in notes}
+    roots = []
+    for n in by_slug.values():
+        parent = by_slug.get(n.get("parent") or "")
+        (parent["children"] if parent else roots).append(n)
+
+    def _sort(nodes: list[dict]):
+        nodes.sort(key=lambda n: n["title"].lower())
+        for n in nodes:
+            _sort(n["children"])
+
+    _sort(roots)
+    return roots
+
+
 def list_all_tags() -> list[str]:
     """Return every distinct tag in use across all notes, sorted."""
     tags = set()

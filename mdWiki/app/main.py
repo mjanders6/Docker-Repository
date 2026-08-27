@@ -104,6 +104,9 @@ def index(request: Request, class_filter: str = "", tag: str = "", q: str = "", 
         notebook = store.notebook_name(notebook)
         notes = [n for n in notes if n["notebook"] == notebook]
     notes.sort(key=lambda n: n["mtime"], reverse=True)
+    # Within a notebook, browse notes as a parent/sub-note tree instead of
+    # a flat recency list; "All notes" (no notebook selected) stays flat.
+    note_tree = store.build_note_tree(notes) if notebook else []
 
     classes = store.list_classes()
     class_counts = {c["name"]: store.count_notes_by_class(c["name"]) for c in classes}
@@ -113,7 +116,7 @@ def index(request: Request, class_filter: str = "", tag: str = "", q: str = "", 
                        for name in store.list_notebooks()}
 
     return templates.TemplateResponse("index.html", {
-        "request": request, "notes": notes, "classes": classes,
+        "request": request, "notes": notes, "note_tree": note_tree, "classes": classes,
         "class_counts": class_counts, "all_tags": all_tags,
         "class_filter": class_filter, "tag": tag, "q": q,
         "notebooks": store.list_notebooks(), "notebook": notebook,
