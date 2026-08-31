@@ -13,10 +13,11 @@
       <details class="nav-menu">
         <summary>Navigate</summary>
         <div class="nav-menu-items">
-          <a href="/" class="{{ 'active' if request.url.path == '/' }}">Notes</a>
+          <a href="/" class="{{ 'active' if request.url.path == '/' }}">Notebooks</a>
           <a href="/classes" class="{{ 'active' if request.url.path.startswith('/classes') }}">Classes</a>
           <a href="/help" class="{{ 'active' if request.url.path == '/help' }}">Help</a>
           <a class="new-btn" href="/new">+ New Note</a>
+          <a class="new-btn" href="/notebooks/new">+ New Notebook</a>
         </div>
       </details>
     </nav>

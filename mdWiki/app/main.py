@@ -274,6 +274,34 @@ async def create_notebook_submit(request: Request):
     return RedirectResponse(f"/?notebook={name}", status_code=303)
 
 
+@app.get("/notebooks/{name}/edit", response_class=HTMLResponse)
+def edit_notebook_form(request: Request, name: str):
+    if name == store.DEFAULT_NOTEBOOK or name not in store.list_notebooks():
+        return HTMLResponse("Notebook not found", status_code=404)
+    return templates.TemplateResponse("notebook_form.html", {
+        "request": request, "error": None, "notebook": name,
+    })
+
+
+@app.post("/notebooks/{name}/edit")
+async def rename_notebook_submit(name: str, request: Request):
+    form = await request.form()
+    new_name = store.notebook_slugify(form.get("name", ""))
+    if not new_name:
+        return templates.TemplateResponse("notebook_form.html", {
+            "request": request, "error": "Notebook name must contain letters, numbers, - or _.",
+            "notebook": name,
+        }, status_code=400)
+    if new_name != name and new_name in store.list_notebooks():
+        return templates.TemplateResponse("notebook_form.html", {
+            "request": request, "error": f"A notebook named '{new_name}' already exists.",
+            "notebook": name,
+        }, status_code=400)
+    if new_name != name and not store.rename_notebook(name, new_name):
+        return HTMLResponse("Notebook could not be updated", status_code=400)
+    return RedirectResponse(f"/?notebook={new_name}", status_code=303)
+
+
 @app.post("/notebooks/{name}/delete")
 def delete_notebook_route(name: str):
     if not store.delete_notebook(name):

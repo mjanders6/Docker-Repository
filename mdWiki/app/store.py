@@ -168,6 +168,36 @@ def delete_notebook(name: str) -> bool:
     shutil.rmtree(path)
     return True
 
+
+def rename_notebook(old_name: str, new_name: str) -> bool:
+    """Rename a notebook folder and update its notes' stored notebook names."""
+    if (not old_name or old_name == DEFAULT_NOTEBOOK
+            or notebook_slugify(old_name) != old_name):
+        return False
+    new_name = notebook_slugify(new_name)
+    if not new_name or new_name == DEFAULT_NOTEBOOK:
+        return False
+    old_path = (NOTES_DIR / old_name).resolve()
+    new_path = (NOTES_DIR / new_name).resolve()
+    if not _is_safe(old_path) or not _is_safe(new_path) or not old_path.is_dir() or new_path.exists():
+        return False
+
+    old_path.rename(new_path)
+    old_prefix = f"{old_name}/"
+    new_prefix = f"{new_name}/"
+    for note in list_notes():
+        metadata = None
+        if note["notebook"] == old_name:
+            metadata = get_note(note["slug"])["metadata"]
+            metadata["notebook"] = new_name
+        parent = (metadata or get_note(note["slug"])["metadata"]).get("parent", "")
+        if parent.startswith(old_prefix):
+            metadata = metadata or get_note(note["slug"])["metadata"]
+            metadata["parent"] = new_prefix + parent.removeprefix(old_prefix)
+        if metadata is not None:
+            save_note(note["slug"], metadata, get_note(note["slug"])["body"])
+    return True
+
 def _note_path(slug: str) -> Path:
     # notes may live in subfolders; slug can contain "/"
     return (NOTES_DIR / f"{slug}.md").resolve()

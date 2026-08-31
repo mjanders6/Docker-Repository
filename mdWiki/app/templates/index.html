@@ -36,6 +36,15 @@
   </form>
 </div>
 
+{% if notebook != 'unfiled' %}
+<div class="form-actions">
+  <a class="btn" href="/notebooks/{{ notebook }}/edit">Edit notebook</a>
+  <form method="post" action="/notebooks/{{ notebook }}/delete" onsubmit="return confirm('Delete this notebook and all of its notes?');">
+    <button class="btn" type="submit">Delete notebook</button>
+  </form>
+</div>
+{% endif %}
+
 <div class="layout">
   <aside class="sidebar note-tree-sidebar">
     <div class="sidebar-heading"><h3>Notes</h3><a href="/new?notebook={{ notebook }}" title="New note">+</a></div>

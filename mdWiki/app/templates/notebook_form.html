@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}New Notebook{% endblock %}
+{% block title %}{{ 'Edit Notebook' if notebook else 'New Notebook' }}{% endblock %}
 {% block content %}
-<form class="new-form" method="post" action="/notebooks/new">
-  <h2>New Notebook</h2>
+<form class="new-form" method="post" action="{{ '/notebooks/' ~ notebook ~ '/edit' if notebook else '/notebooks/new' }}">
+  <h2>{{ 'Edit Notebook' if notebook else 'New Notebook' }}</h2>
   {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
   <label>Name
-    <input type="text" name="name" placeholder="e.g. homelab" required autofocus>
+    <input type="text" name="name" value="{{ notebook or '' }}" placeholder="e.g. homelab" required autofocus>
   </label>
   <div class="form-actions">
-    <button class="btn btn-primary" type="submit">Create Notebook</button>
-    <a class="btn" href="/">Cancel</a>
+    <button class="btn btn-primary" type="submit">{{ 'Save Notebook' if notebook else 'Create Notebook' }}</button>
+    <a class="btn" href="{{ '/?notebook=' ~ notebook if notebook else '/' }}">Cancel</a>
   </div>
 </form>
 {% endblock %}
