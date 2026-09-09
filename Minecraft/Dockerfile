@@ -8,7 +8,7 @@ ENV MC_UID=1000 \
     EULA=true \
     SERVER_PORT=25565 \
     MC_VERSION=26.2 \
-    FORGE_VERSION=65.0.9
+    FORGE_VERSION=65.1.0
 
 USER root
 
