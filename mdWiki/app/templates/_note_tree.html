@@ -2,14 +2,21 @@
   <ul class="note-tree">
     {% for n in nodes %}
       <li class="note-tree-item">
-        <a class="note-card{{ ' active' if n.slug == active_slug else '' }}" href="/note/{{ n.slug }}">
-          <div class="note-card-title">{{ n.title }}</div>
-          <div class="note-card-meta">
-            {% if n.class %}<span class="badge">{{ n.class }}</span>{% endif %}
-            {% for t in n.tags %}<span class="tag">#{{ t }}</span>{% endfor %}
-          </div>
-        </a>
-        {% if n.children %}{{ render_note_tree(n.children, active_slug) }}{% endif %}
+        {% if n.children %}
+        <details class="note-tree-node" open>
+          <summary class="note-row{{ ' active' if n.slug == active_slug else '' }}" title="{{ n.title }}">
+            <span class="note-row-icon" aria-hidden="true">📄</span>
+            <a class="note-row-link" href="/note/{{ n.slug }}" onclick="event.stopPropagation()">{{ n.title }}</a>
+          </summary>
+          {{ render_note_tree(n.children, active_slug) }}
+        </details>
+        {% else %}
+        <div class="note-row note-row-leaf{{ ' active' if n.slug == active_slug else '' }}" title="{{ n.title }}">
+          <span class="note-row-spacer" aria-hidden="true"></span>
+          <span class="note-row-icon" aria-hidden="true">📄</span>
+          <a class="note-row-link" href="/note/{{ n.slug }}">{{ n.title }}</a>
+        </div>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>
