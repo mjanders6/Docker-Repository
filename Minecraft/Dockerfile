@@ -7,8 +7,8 @@ ENV MC_UID=1000 \
     MC_GROUP=minecraft \
     EULA=true \
     SERVER_PORT=25565 \
-    MC_VERSION=26.2 \
-    FORGE_VERSION=65.1.0
+    MC_VERSION=26.3 \
+    FORGE_VERSION=65.0.2
 
 USER root
 
