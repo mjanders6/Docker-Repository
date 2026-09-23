@@ -87,6 +87,10 @@ endif
 		alpine sh -c "\
 			cd /server && \
 			tar xzf /backups/$(FILE) --strip-components=1 \
+				server/ops.json \
+				server/banned-ips.json \
+				server/banned-players.json \
+				server/whitelist.json \
 				server/world \
 				server/world_nether \
 				server/world_the_end \
